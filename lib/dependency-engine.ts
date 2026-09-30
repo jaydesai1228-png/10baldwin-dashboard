@@ -168,3 +168,115 @@ export function calculateBurndownAnalytics(tasks: TaskWithDependencyState[]) {
     byTrade: toSortedGroup(tradeMap),
   };
 }
+
+/**
+ * Checks whether an item is actively snoozed.
+ * Filter criteria: item is not actively snoozed (!task.dismissed_until || new Date(task.dismissed_until) <= new Date()).
+ */
+export function isActivelySnoozed(task: PunchTask | TaskWithDependencyState): boolean {
+  if (!task.dismissed_until) return false;
+  const dismissTime = new Date(task.dismissed_until).getTime();
+  return !isNaN(dismissTime) && dismissTime > Date.now();
+}
+
+/**
+ * Move-In Milestone: Hard deadline is November 15, 2026.
+ * Dynamic countdown: Math.ceil((targetDate - now) / (1000 * 60 * 60 * 24))
+ */
+export function calculateMoveInCountdown(targetDate: Date = new Date('2026-11-15T00:00:00')): {
+  daysLeft: number;
+  targetFormatted: string;
+  isPast: boolean;
+} {
+  const now = Date.now();
+  const diffTime = targetDate.getTime() - now;
+  const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  return {
+    daysLeft,
+    targetFormatted: 'Nov 15, 2026',
+    isPast: daysLeft < 0,
+  };
+}
+
+/**
+ * Top 3 Critical Focus Queues for Jay and Joe.
+ * Criteria:
+ * - Status is not 'done'
+ * - Item is not actively snoozed (!task.dismissed_until || new Date(task.dismissed_until) <= new Date())
+ *
+ * Allocation:
+ * - Jay's Queue: task.waiting_on?.owner === 'Jay' or trade is procurement/selection.
+ * - Joe's Queue: task.waiting_on?.owner === 'Joe' or physical on-site gating blocker.
+ */
+export function getTopFocusQueues(tasks: TaskWithDependencyState[]) {
+  const notDone = tasks.filter((t) => t.effectiveStatus !== 'done');
+
+  const activeTasks = notDone.filter((t) => !isActivelySnoozed(t));
+  const snoozedTasks = notDone.filter((t) => isActivelySnoozed(t));
+
+  const isJayItem = (t: TaskWithDependencyState): boolean => {
+    if (t.waiting_on?.owner === 'Jay') return true;
+    if (t.assigned_to === 'Jay') return true;
+    const trade = (t.trade || '').toLowerCase();
+    const title = (t.title || '').toLowerCase();
+    const desc = (t.description || '').toLowerCase();
+    return (
+      trade.includes('procurement') ||
+      trade.includes('selection') ||
+      trade.includes('design') ||
+      title.includes('select') ||
+      title.includes('order') ||
+      title.includes('finalize') ||
+      title.includes('decide') ||
+      desc.includes('select') ||
+      desc.includes('order')
+    );
+  };
+
+  const isJoeItem = (t: TaskWithDependencyState): boolean => {
+    if (t.waiting_on?.owner === 'Joe') return true;
+    if (t.assigned_to === 'Joe') return true;
+    // Physical on-site gating blocker: unblocks other tasks or has dependent downstream tasks
+    const isGating = (t.unlocks && t.unlocks.length > 0) || t.dependentTasks.length > 0;
+    const trade = (t.trade || '').toLowerCase();
+    const isOnSite = /stucco|framing|plumbing|hvac|drywall|tile|carpentry|electrical|excavation|septic|gutters|waterproofing|flooring|stone/i.test(trade);
+    return isGating || isOnSite;
+  };
+
+  // Ranking function:
+  // 1. Ready tasks (ready or in_progress) come before blocked tasks
+  // 2. High downstream blocker impact (more dependent tasks or unlocks) comes first
+  const rankComparator = (a: TaskWithDependencyState, b: TaskWithDependencyState) => {
+    const aReady = a.effectiveStatus === 'ready' || a.effectiveStatus === 'in_progress';
+    const bReady = b.effectiveStatus === 'ready' || b.effectiveStatus === 'in_progress';
+    if (aReady && !bReady) return -1;
+    if (!aReady && bReady) return 1;
+
+    const aDownstream = (a.dependentTasks?.length || 0) + (a.unlocks?.length || 0);
+    const bDownstream = (b.dependentTasks?.length || 0) + (b.unlocks?.length || 0);
+    if (bDownstream !== aDownstream) return bDownstream - aDownstream;
+
+    return a.id.localeCompare(b.id);
+  };
+
+  const sortedActive = [...activeTasks].sort(rankComparator);
+
+  const jayEligible = sortedActive.filter(isJayItem);
+  const joeEligible = sortedActive.filter(isJoeItem);
+
+  const jayTop3 = jayEligible.slice(0, 3);
+  const joeTop3 = joeEligible.slice(0, 3);
+
+  const jaySnoozed = snoozedTasks.filter(isJayItem);
+  const joeSnoozed = snoozedTasks.filter(isJoeItem);
+
+  return {
+    jayTop3,
+    joeTop3,
+    jayEligible,
+    joeEligible,
+    jaySnoozed,
+    joeSnoozed,
+    allSnoozed: snoozedTasks,
+  };
+}

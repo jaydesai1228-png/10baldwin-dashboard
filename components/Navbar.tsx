@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserRole } from '@/types/punchlist';
-import { HardHat, User, Plus, RefreshCw, Check, Hammer } from 'lucide-react';
+import { HardHat, User, Plus, RefreshCw, Check, Hammer, Calendar, Layers } from 'lucide-react';
 
 interface NavbarProps {
   activeRole: UserRole;
@@ -8,6 +8,8 @@ interface NavbarProps {
   onOpenNewTask: () => void;
   onReset: () => void;
   isSaving: boolean;
+  daysLeft?: number;
+  onOpenSequences?: () => void;
 }
 
 export function Navbar({
@@ -16,6 +18,8 @@ export function Navbar({
   onOpenNewTask,
   onReset,
   isSaving,
+  daysLeft,
+  onOpenSequences,
 }: NavbarProps) {
   return (
     <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-4 py-3 sm:px-6 shadow-xs">
@@ -56,6 +60,32 @@ export function Navbar({
 
         {/* Center / Right Controls: Role Switcher & New Task */}
         <div className="flex items-center gap-2 sm:gap-3">
+          {/* Dynamic Move-In Countdown Badge */}
+          {daysLeft !== undefined && (
+            <button
+              type="button"
+              onClick={onOpenSequences}
+              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200/90 text-amber-900 transition-colors cursor-pointer"
+              title="Move-In Target: Nov 15, 2026. Click to view Key Construction Sequences & Rules."
+            >
+              <Calendar className="w-3.5 h-3.5 text-amber-600" />
+              <span className="text-xs font-bold">
+                Move-In: <span className="text-amber-700 font-extrabold">{daysLeft}d</span>
+              </span>
+            </button>
+          )}
+
+          {onOpenSequences && (
+            <button
+              type="button"
+              onClick={onOpenSequences}
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer"
+            >
+              <Layers className="w-3.5 h-3.5 text-slate-500" />
+              <span>Sequences & Rules</span>
+            </button>
+          )}
+
           {/* Sticky Role Switcher */}
           <div className="bg-slate-100 p-1 rounded-xl border border-slate-200/90 flex items-center">
             <span className="hidden md:inline text-[11px] font-semibold text-slate-500 px-2 uppercase tracking-wider">

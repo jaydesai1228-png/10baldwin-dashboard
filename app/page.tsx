@@ -10,6 +10,8 @@ import { WaitingOnView } from '@/components/views/WaitingOnView';
 import { AllTasksView } from '@/components/views/AllTasksView';
 import { TaskModal } from '@/components/TaskModal';
 import { NewTaskModal } from '@/components/NewTaskModal';
+import { TopFocusSection } from '@/components/TopFocusSection';
+import { ConstructionSequencesModal } from '@/components/ConstructionSequencesModal';
 import {
   Sparkles,
   TrendingUp,
@@ -20,6 +22,7 @@ import {
   HardHat,
   User,
   ShieldCheck,
+  Layers,
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -35,11 +38,16 @@ export default function DashboardPage() {
     createTask,
     deleteTask,
     resetToDefaults,
+    focusQueues,
+    moveInCountdown,
+    snoozeTask,
+    unsnoozeTask,
   } = usePunchList();
 
   const [activeTab, setActiveTab] = useState<ViewTab>('ready_today');
   const [selectedTask, setSelectedTask] = useState<TaskWithDependencyState | null>(null);
   const [isNewTaskOpen, setIsNewTaskOpen] = useState(false);
+  const [isSequencesOpen, setIsSequencesOpen] = useState(false);
 
   // Keep selectedTask in sync when tasks update
   const currentSelectedTask = selectedTask
@@ -102,17 +110,31 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-amber-500 selection:text-slate-950 font-sans">
-      {/* Sticky Header with Fast Role Switcher */}
+      {/* Sticky Header with Fast Role Switcher & Move-In Milestone */}
       <Navbar
         activeRole={activeRole}
         onRoleChange={setActiveRole}
         onOpenNewTask={() => setIsNewTaskOpen(true)}
         onReset={resetToDefaults}
         isSaving={isSaving}
+        daysLeft={moveInCountdown.daysLeft}
+        onOpenSequences={() => setIsSequencesOpen(true)}
       />
 
       {/* Primary Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-4 sm:px-6 sm:py-6 space-y-6">
+        {/* Top 3 Critical Focus Queue & 3-Day Snooze Engine */}
+        <TopFocusSection
+          activeRole={activeRole}
+          focusQueues={focusQueues}
+          moveInCountdown={moveInCountdown}
+          onOpenDetails={setSelectedTask}
+          onQuickStatusChange={updateTaskStatus}
+          onSnooze={snoozeTask}
+          onUnsnooze={unsnoozeTask}
+          onOpenSequences={() => setIsSequencesOpen(true)}
+        />
+
         {/* Navigation Tabs Bar */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200">
           {/* Tab 1: Ready to Work Today */}
@@ -202,6 +224,8 @@ export default function DashboardPage() {
             onOpenDetails={setSelectedTask}
             onQuickStatusChange={updateTaskStatus}
             onSwitchToWaitingTab={() => setActiveTab('waiting_on')}
+            onSnooze={snoozeTask}
+            onUnsnooze={unsnoozeTask}
           />
         )}
 
@@ -261,6 +285,8 @@ export default function DashboardPage() {
         onUpdateStatus={updateTaskStatus}
         onAddFieldNote={addFieldNote}
         onDeleteTask={deleteTask}
+        onSnooze={snoozeTask}
+        onUnsnooze={unsnoozeTask}
       />
 
       {/* New Task Creation Modal */}
@@ -270,6 +296,13 @@ export default function DashboardPage() {
         allTasks={tasks}
         onCreateTask={createTask}
         activeRole={activeRole}
+      />
+
+      {/* Key Construction Sequences & Rules Modal */}
+      <ConstructionSequencesModal
+        isOpen={isSequencesOpen}
+        onClose={() => setIsSequencesOpen(false)}
+        daysLeft={moveInCountdown.daysLeft}
       />
     </div>
   );

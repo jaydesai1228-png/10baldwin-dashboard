@@ -3,7 +3,12 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { PunchTask, TaskStatus, UserRole, TaskWithDependencyState, FieldNote } from '@/types/punchlist';
 import { INITIAL_TASKS } from '@/lib/seed-data';
-import { computeDependencyGraph, calculateBurndownAnalytics } from '@/lib/dependency-engine';
+import {
+  computeDependencyGraph,
+  calculateBurndownAnalytics,
+  getTopFocusQueues,
+  calculateMoveInCountdown,
+} from '@/lib/dependency-engine';
 
 const STORAGE_KEY = '10baldwin_tasks_v1';
 const ROLE_KEY = '10baldwin_active_role_v1';
@@ -132,6 +137,7 @@ export function usePunchList() {
         id: `note-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`,
         author: activeRole,
         text: noteText.trim(),
+        timestamp: new Date().toISOString(),
         createdAt: new Date().toISOString(),
       };
 
@@ -169,6 +175,7 @@ export function usePunchList() {
         status: taskData.status || 'ready',
         priority: taskData.priority || 'medium',
         blocked_by: taskData.blocked_by || [],
+        unlocks: taskData.unlocks || [],
         waiting_on: taskData.waiting_on,
         notes: taskData.notes || [],
         assigned_to: taskData.assigned_to || activeRole,
@@ -197,10 +204,57 @@ export function usePunchList() {
     [tasks, persistTasks]
   );
 
+  // 3-Day Snooze Engine:
+  // Action: Sets dismissed_until = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString()
+  const snoozeTask = useCallback(
+    (taskId: string, days: number = 3) => {
+      const dismissedUntil = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+      const newTasks = tasks.map((t) => {
+        if (t.id === taskId) {
+          return {
+            ...t,
+            dismissed_until: dismissedUntil,
+            updatedAt: new Date().toISOString(),
+          };
+        }
+        return t;
+      });
+      persistTasks(newTasks);
+    },
+    [tasks, persistTasks]
+  );
+
+  // Manual Un-snooze: clears the flag immediately, restoring priority
+  const unsnoozeTask = useCallback(
+    (taskId: string) => {
+      const newTasks = tasks.map((t) => {
+        if (t.id === taskId) {
+          const copy = { ...t };
+          delete copy.dismissed_until;
+          return {
+            ...copy,
+            updatedAt: new Date().toISOString(),
+          };
+        }
+        return t;
+      });
+      persistTasks(newTasks);
+    },
+    [tasks, persistTasks]
+  );
+
   // Reset to initial defaults
   const resetToDefaults = useCallback(() => {
     persistTasks(INITIAL_TASKS);
   }, [persistTasks]);
+
+  const focusQueues = useMemo(() => {
+    return getTopFocusQueues(computedTasks);
+  }, [computedTasks]);
+
+  const moveInCountdown = useMemo(() => {
+    return calculateMoveInCountdown();
+  }, []);
 
   return {
     tasks: computedTasks,
@@ -216,5 +270,9 @@ export function usePunchList() {
     deleteTask,
     resetToDefaults,
     burndownAnalytics,
+    focusQueues,
+    moveInCountdown,
+    snoozeTask,
+    unsnoozeTask,
   };
 }

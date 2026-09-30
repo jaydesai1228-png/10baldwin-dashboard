@@ -14,15 +14,18 @@ import {
   RotateCcw,
   Check,
   Calendar,
+  Clock,
 } from 'lucide-react';
 
 interface TaskCardProps {
   task: TaskWithDependencyState;
   onOpenDetails: (task: TaskWithDependencyState) => void;
   onQuickStatusChange: (taskId: string, status: TaskStatus) => void;
+  onSnooze?: (taskId: string, days?: number) => void;
+  onUnsnooze?: (taskId: string) => void;
 }
 
-export function TaskCard({ task, onOpenDetails, onQuickStatusChange }: TaskCardProps) {
+export function TaskCard({ task, onOpenDetails, onQuickStatusChange, onSnooze, onUnsnooze }: TaskCardProps) {
   const isHardBlocked = task.unsatisfiedBlockers.length > 0;
   const isDone = task.effectiveStatus === 'done';
   const isInProgress = task.effectiveStatus === 'in_progress';
@@ -75,6 +78,14 @@ export function TaskCard({ task, onOpenDetails, onQuickStatusChange }: TaskCardP
             {task.priority === 'high' && (
               <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${priorityBadge}`}>
                 HIGH
+              </span>
+            )}
+
+            {/* Snoozed Tag (if active) */}
+            {Boolean(task.dismissed_until && new Date(task.dismissed_until).getTime() > Date.now()) && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">
+                <Clock className="w-3 h-3 text-amber-600" />
+                <span>Snoozed 3d</span>
               </span>
             )}
           </div>

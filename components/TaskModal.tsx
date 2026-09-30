@@ -27,6 +27,7 @@ import {
   HardHat,
   User,
   AlertTriangle,
+  RotateCcw,
 } from 'lucide-react';
 
 interface TaskModalProps {
@@ -38,6 +39,8 @@ interface TaskModalProps {
   onUpdateStatus: (taskId: string, status: TaskStatus) => void;
   onAddFieldNote: (taskId: string, noteText: string) => void;
   onDeleteTask: (taskId: string) => void;
+  onSnooze?: (taskId: string, days?: number) => void;
+  onUnsnooze?: (taskId: string) => void;
 }
 
 export function TaskModal({
@@ -49,6 +52,8 @@ export function TaskModal({
   onUpdateStatus,
   onAddFieldNote,
   onDeleteTask,
+  onSnooze,
+  onUnsnooze,
 }: TaskModalProps) {
   if (!task) return null;
 
@@ -213,6 +218,41 @@ export function TaskModal({
                   </button>
                 );
               })}
+            </div>
+
+            {/* 3-Day Snooze Control */}
+            <div className="mt-3.5 pt-3 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-2">
+                <Clock className="w-3.5 h-3.5 text-amber-600" />
+                <span className="font-semibold text-slate-700">Top 3 Critical Focus Queue:</span>
+                {Boolean(task.dismissed_until && new Date(task.dismissed_until).getTime() > Date.now()) ? (
+                  <span className="px-2 py-0.5 rounded-md bg-amber-100 text-amber-900 font-bold text-[11px]">
+                    Snoozed until {new Date(task.dismissed_until!).toLocaleDateString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                ) : (
+                  <span className="text-slate-500">Active in priority queue</span>
+                )}
+              </div>
+
+              {Boolean(task.dismissed_until && new Date(task.dismissed_until).getTime() > Date.now()) ? (
+                <button
+                  type="button"
+                  onClick={() => onUnsnooze && onUnsnooze(task.id)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-xs transition-colors cursor-pointer"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Un-snooze Now</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => onSnooze && onSnooze(task.id, 3)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-semibold text-xs shadow-2xs transition-colors cursor-pointer"
+                >
+                  <Clock className="w-3.5 h-3.5 text-amber-600" />
+                  <span>Snooze 3 Days</span>
+                </button>
+              )}
             </div>
           </div>
 

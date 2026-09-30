@@ -1,58 +1,56 @@
-export type TaskStatus = 'ready' | 'in_progress' | 'pending_external' | 'blocked' | 'done';
+export type TaskStatus = 'blocked' | 'ready' | 'in_progress' | 'pending_external' | 'done';
+export type OwnerRole = 'Jay' | 'Joe' | 'Trade' | 'Supplier' | 'Township';
 
-export type UserRole = 'Jay' | 'Joe';
-
-export type WaitingOnOwner =
-  | 'Jay'
-  | 'Joe'
-  | 'Trade'
-  | 'Supplier'
-  | 'Township'
-  | 'Architect'
-  | 'Other';
-
-export type Priority = 'high' | 'medium' | 'low';
-
-export interface FieldNote {
+export interface TaskNote {
   id: string;
-  author: UserRole;
+  author: 'Jay' | 'Joe';
+  timestamp: string;
   text: string;
   createdAt?: string;
-  timestamp?: string;
 }
 
 export interface WaitingOnMetadata {
-  owner: WaitingOnOwner | string;
+  owner: OwnerRole | string;
   description: string;
-  isWaiting?: boolean;
+  target_date?: string;
+  // Optional backwards compatibility fields
   targetDate?: string;
+  isWaiting?: boolean;
   urgency?: 'critical' | 'standard' | 'low';
 }
 
-export interface PunchTask {
+export interface Task {
   id: string;
   title: string;
-  description?: string;
   room: string;
   trade: string;
   outcome: string;
+  blocked_by: string[];
+  unlocks: string[];
   status: TaskStatus;
-  priority?: Priority;
-  blocked_by: string[]; // List of task IDs that must be completed ('done') before this task can be worked on
-  unlocks?: string[]; // Downstream tasks this task will unlock
   waiting_on?: WaitingOnMetadata;
-  notes: FieldNote[];
+  dismissed_until?: string;
+  notes: TaskNote[];
+  // Backwards compatibility for UI and metadata
+  description?: string;
+  priority?: Priority;
   assigned_to?: 'Jay' | 'Joe' | string;
   createdAt?: string;
   updatedAt?: string;
 }
 
-export type Task = PunchTask;
+// Aliases for seamless codebase integration
+export type PunchTask = Task;
+export type FieldNote = TaskNote;
+export type UserRole = 'Jay' | 'Joe';
+export type WaitingOnOwner = OwnerRole | string;
+export type Priority = 'high' | 'medium' | 'low';
 
-export interface TaskWithDependencyState extends PunchTask {
+export interface TaskWithDependencyState extends Task {
   effectiveStatus: TaskStatus; // If any blocker is incomplete, effectiveStatus is 'blocked' (unless already 'done')
-  unsatisfiedBlockers: PunchTask[];
-  dependentTasks: PunchTask[]; // Tasks that this task is currently blocking
+  unsatisfiedBlockers: Task[];
+  dependentTasks: Task[]; // Tasks that this task is currently blocking
 }
 
 export type ViewTab = 'ready_today' | 'burndown' | 'waiting_on' | 'all_tasks';
+

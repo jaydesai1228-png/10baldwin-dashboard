@@ -18,6 +18,8 @@ interface ReadyTodayViewProps {
   onOpenDetails: (task: TaskWithDependencyState) => void;
   onQuickStatusChange: (taskId: string, status: TaskStatus) => void;
   onSwitchToWaitingTab: () => void;
+  onSnooze?: (taskId: string, days?: number) => void;
+  onUnsnooze?: (taskId: string) => void;
 }
 
 type GroupByMode = 'room' | 'trade' | 'none';
@@ -27,6 +29,8 @@ export function ReadyTodayView({
   onOpenDetails,
   onQuickStatusChange,
   onSwitchToWaitingTab,
+  onSnooze,
+  onUnsnooze,
 }: ReadyTodayViewProps) {
   const [groupBy, setGroupBy] = useState<GroupByMode>('room');
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
@@ -234,6 +238,8 @@ export function ReadyTodayView({
                         task={task}
                         onOpenDetails={onOpenDetails}
                         onQuickStatusChange={onQuickStatusChange}
+                        onSnooze={onSnooze}
+                        onUnsnooze={onUnsnooze}
                       />
                     ))}
                   </div>

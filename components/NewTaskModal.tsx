@@ -79,6 +79,7 @@ export function NewTaskModal({
       priority,
       status: isWaiting ? 'pending_external' : selectedBlockers.length > 0 ? 'blocked' : 'ready',
       blocked_by: selectedBlockers,
+      unlocks: [],
       assigned_to: assignedTo,
       waiting_on: isWaiting
         ? {
