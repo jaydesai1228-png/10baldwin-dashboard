@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { TaskWithDependencyState, TaskStatus } from '@/types/punchlist';
+import { TaskWithDependencyState, TaskStatus, UserRole } from '@/types/punchlist';
 import {
   Hourglass,
   User,
@@ -20,9 +20,15 @@ interface WaitingOnViewProps {
   tasks: TaskWithDependencyState[];
   onOpenDetails: (task: TaskWithDependencyState) => void;
   onQuickStatusChange: (taskId: string, status: TaskStatus) => void;
+  activeRole?: UserRole;
 }
 
-export function WaitingOnView({ tasks, onOpenDetails, onQuickStatusChange }: WaitingOnViewProps) {
+export function WaitingOnView({
+  tasks,
+  onOpenDetails,
+  onQuickStatusChange,
+  activeRole = 'Jay',
+}: WaitingOnViewProps) {
   const [selectedOwner, setSelectedOwner] = useState<string>('All');
 
   // Filter tasks that have active waiting_on metadata or pending_external status
@@ -37,8 +43,8 @@ export function WaitingOnView({ tasks, onOpenDetails, onQuickStatusChange }: Wai
   const ownerConfig: Record<string, { label: string; icon: React.ReactNode; color: string; badge: string }> = {
     Jay: {
       label: 'Jay (Homeowner)',
-      icon: <User className="w-4 h-4 text-sky-700" />,
-      color: 'bg-sky-50 text-sky-800 border-sky-200',
+      icon: <User className="w-4 h-4 text-indigo-700" />,
+      color: 'bg-indigo-50 text-indigo-800 border-indigo-200',
       badge: 'Owner Decision / Purchase',
     },
     Joe: {

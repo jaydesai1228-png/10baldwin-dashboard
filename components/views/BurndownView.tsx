@@ -1,5 +1,5 @@
 import React from 'react';
-import { TaskWithDependencyState } from '@/types/punchlist';
+import { TaskWithDependencyState, UserRole } from '@/types/punchlist';
 import { calculateBurndownAnalytics, GroupProgress } from '@/lib/dependency-engine';
 import {
   TrendingUp,
@@ -15,9 +15,10 @@ import {
 
 interface BurndownViewProps {
   tasks: TaskWithDependencyState[];
+  activeRole?: UserRole;
 }
 
-export function BurndownView({ tasks }: BurndownViewProps) {
+export function BurndownView({ tasks, activeRole = 'Jay' }: BurndownViewProps) {
   const analytics = calculateBurndownAnalytics(tasks);
   const { overall, byOutcome, byRoom, byTrade } = analytics;
 
@@ -27,8 +28,12 @@ export function BurndownView({ tasks }: BurndownViewProps) {
       <div className="p-6 md:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-sm">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-semibold border border-amber-200">
-              <TrendingUp className="w-3.5 h-3.5 text-amber-600" />
+            <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border transition-colors ${
+              activeRole === 'Jay'
+                ? 'bg-indigo-50 text-indigo-800 border-indigo-200'
+                : 'bg-amber-50 text-amber-800 border-amber-200'
+            }`}>
+              <TrendingUp className={`w-3.5 h-3.5 ${activeRole === 'Jay' ? 'text-indigo-600' : 'text-amber-600'}`} />
               <span>Project Burndown & Velocity</span>
             </div>
             <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-sans">

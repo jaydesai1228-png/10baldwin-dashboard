@@ -1,6 +1,6 @@
 import React from 'react';
 import { UserRole } from '@/types/punchlist';
-import { HardHat, User, Plus, RefreshCw, Check, Hammer, Calendar, Layers } from 'lucide-react';
+import { HardHat, User, Plus, RefreshCw, Check, Hammer, Calendar, Layers, Home } from 'lucide-react';
 
 interface NavbarProps {
   activeRole: UserRole;
@@ -21,36 +21,58 @@ export function Navbar({
   daysLeft,
   onOpenSequences,
 }: NavbarProps) {
+  const isJay = activeRole === 'Jay';
+
   return (
-    <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200/90 px-4 py-3 sm:px-6 shadow-xs">
+    <header
+      className={`sticky top-0 z-30 transition-colors duration-200 px-4 py-3 sm:px-6 shadow-md ${
+        isJay
+          ? 'bg-slate-900 text-slate-100 border-b border-indigo-900/40'
+          : 'bg-zinc-950 text-zinc-100 border-b border-amber-900/40'
+      }`}
+    >
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-        {/* Project Brand */}
+        {/* Project Brand & Persona Badge */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-slate-950 font-bold shadow-sm shadow-amber-500/20">
-            <Hammer className="w-5 h-5" />
+          <div
+            className={`w-10 h-10 rounded-xl flex items-center justify-center font-bold shadow-md transition-all duration-200 ${
+              isJay
+                ? 'bg-gradient-to-br from-indigo-500 to-blue-600 text-white shadow-indigo-500/25'
+                : 'bg-gradient-to-br from-amber-500 to-orange-500 text-slate-950 shadow-amber-500/25'
+            }`}
+          >
+            {isJay ? <Home className="w-5 h-5" /> : <Hammer className="w-5 h-5" />}
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg sm:text-xl font-bold tracking-tight text-slate-900 flex items-center gap-2 font-sans">
+              <h1 className="text-lg sm:text-xl font-black tracking-tight text-white flex items-center gap-2 font-sans">
                 10 Baldwin
               </h1>
-              <span className="hidden sm:inline-flex px-2 py-0.5 text-[11px] font-semibold rounded-md bg-amber-50 text-amber-800 border border-amber-200">
-                Jobsite Board
+              {/* Persona Mode Badge */}
+              <span
+                className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold rounded-lg border transition-all duration-200 ${
+                  isJay
+                    ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/35'
+                    : 'bg-amber-500/20 text-amber-300 border-amber-500/35'
+                }`}
+              >
+                {isJay ? <Home className="w-3 h-3 text-indigo-400" /> : <HardHat className="w-3 h-3 text-amber-400" />}
+                <span>{isJay ? 'Homeowner Mode (Jay)' : 'GC Field Mode (Joe)'}</span>
               </span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-500">
+            <div className={`flex items-center gap-2 text-xs transition-colors duration-200 ${isJay ? 'text-slate-400' : 'text-zinc-400'}`}>
               <span>Residential Construction</span>
-              <span className="text-slate-300">•</span>
+              <span className="text-slate-600">•</span>
               <span className="flex items-center gap-1 text-[11px]">
                 {isSaving ? (
                   <>
-                    <RefreshCw className="w-3 h-3 animate-spin text-amber-600" />
-                    <span className="text-amber-600 font-medium">Syncing...</span>
+                    <RefreshCw className={`w-3 h-3 animate-spin ${isJay ? 'text-indigo-400' : 'text-amber-400'}`} />
+                    <span className={isJay ? 'text-indigo-300 font-medium' : 'text-amber-300 font-medium'}>Syncing...</span>
                   </>
                 ) : (
                   <>
-                    <Check className="w-3 h-3 text-emerald-600" />
-                    <span className="text-emerald-700 font-medium">Auto-saved</span>
+                    <Check className="w-3 h-3 text-emerald-400" />
+                    <span className="text-emerald-400 font-medium">Auto-saved</span>
                   </>
                 )}
               </span>
@@ -65,12 +87,16 @@ export function Navbar({
             <button
               type="button"
               onClick={onOpenSequences}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100/80 border border-amber-200/90 text-amber-900 transition-colors cursor-pointer"
+              className={`hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all duration-200 cursor-pointer ${
+                isJay
+                  ? 'bg-slate-800 hover:bg-slate-700/80 border-indigo-500/30 text-indigo-300'
+                  : 'bg-zinc-900 hover:bg-zinc-800 border-amber-500/30 text-amber-400'
+              }`}
               title="Move-In Target: Nov 15, 2026. Click to view Key Construction Sequences & Rules."
             >
-              <Calendar className="w-3.5 h-3.5 text-amber-600" />
-              <span className="text-xs font-bold">
-                Move-In: <span className="text-amber-700 font-extrabold">{daysLeft}d</span>
+              <Calendar className={`w-3.5 h-3.5 ${isJay ? 'text-indigo-400' : 'text-amber-400'}`} />
+              <span>
+                Move-In: <span className={isJay ? 'text-indigo-200 font-extrabold' : 'text-amber-300 font-extrabold'}>{daysLeft}d</span>
               </span>
             </button>
           )}
@@ -79,45 +105,61 @@ export function Navbar({
             <button
               type="button"
               onClick={onOpenSequences}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors cursor-pointer"
+              className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all duration-200 cursor-pointer ${
+                isJay
+                  ? 'bg-slate-800 hover:bg-slate-700 text-indigo-200 border-slate-700'
+                  : 'bg-zinc-900 hover:bg-zinc-800 text-amber-300 border-zinc-700'
+              }`}
             >
-              <Layers className="w-3.5 h-3.5 text-slate-500" />
+              <Layers className="w-3.5 h-3.5" />
               <span>Sequences & Rules</span>
             </button>
           )}
 
           {/* Sticky Role Switcher */}
-          <div className="bg-slate-100 p-1 rounded-xl border border-slate-200/90 flex items-center">
-            <span className="hidden md:inline text-[11px] font-semibold text-slate-500 px-2 uppercase tracking-wider">
-              Role:
+          <div
+            className={`p-1 rounded-xl border flex items-center transition-colors duration-200 ${
+              isJay ? 'bg-slate-800/90 border-slate-700/80' : 'bg-zinc-900 border-zinc-800'
+            }`}
+          >
+            <span
+              className={`hidden md:inline text-[10px] font-bold px-2 uppercase tracking-wider ${
+                isJay ? 'text-slate-400' : 'text-zinc-500'
+              }`}
+            >
+              Mode:
             </span>
             <button
               type="button"
               onClick={() => onRoleChange('Jay')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer ${
                 activeRole === 'Jay'
-                  ? 'bg-sky-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                  : isJay
+                  ? 'text-slate-400 hover:text-white hover:bg-slate-700/60'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
               }`}
             >
               <User className="w-3.5 h-3.5" />
               <span>Jay</span>
-              <span className="hidden lg:inline text-[10px] opacity-85 font-normal">
+              <span className="hidden lg:inline text-[10px] opacity-80 font-normal">
                 (Owner)
               </span>
             </button>
             <button
               type="button"
               onClick={() => onRoleChange('Joe')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all duration-200 cursor-pointer ${
                 activeRole === 'Joe'
-                  ? 'bg-amber-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                  ? 'bg-amber-500 text-zinc-950 font-black shadow-md shadow-amber-500/30'
+                  : isJay
+                  ? 'text-slate-400 hover:text-white hover:bg-slate-700/60'
+                  : 'text-zinc-400 hover:text-white hover:bg-zinc-800/60'
               }`}
             >
               <HardHat className="w-3.5 h-3.5" />
               <span>Joe</span>
-              <span className="hidden lg:inline text-[10px] opacity-85 font-normal">
+              <span className="hidden lg:inline text-[10px] opacity-80 font-normal">
                 (GC)
               </span>
             </button>
@@ -127,7 +169,11 @@ export function Navbar({
           <button
             type="button"
             onClick={onOpenNewTask}
-            className="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-slate-950 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-sm shadow-amber-500/20 transition-all cursor-pointer"
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-md transition-all duration-200 cursor-pointer ${
+              isJay
+                ? 'bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white shadow-indigo-600/25'
+                : 'bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-zinc-950 shadow-amber-500/25'
+            }`}
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span className="hidden sm:inline">Add Item</span>
@@ -143,7 +189,9 @@ export function Navbar({
               }
             }}
             title="Reset to 10 Baldwin master tasks"
-            className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors text-xs cursor-pointer"
+            className={`p-2 rounded-lg transition-colors duration-200 text-xs cursor-pointer ${
+              isJay ? 'text-slate-400 hover:text-white hover:bg-slate-800' : 'text-zinc-400 hover:text-white hover:bg-zinc-850'
+            }`}
           >
             <RefreshCw className="w-3.5 h-3.5" />
           </button>

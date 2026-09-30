@@ -112,7 +112,9 @@ export function NewTaskModal({
       <div className="w-full max-w-xl bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden my-8">
         <div className="p-4 sm:p-6 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center font-bold">
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-bold ${
+              activeRole === 'Jay' ? 'bg-indigo-50 text-indigo-600' : 'bg-amber-500/10 text-amber-600'
+            }`}>
               <Plus className="w-5 h-5" />
             </div>
             <div>
@@ -141,7 +143,11 @@ export function NewTaskModal({
               placeholder="e.g. Master bathroom vanity mirror sconces rough-in"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full bg-white border border-slate-300 text-sm rounded-xl px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+              className={`w-full bg-white border border-slate-300 text-sm rounded-xl px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 transition-colors ${
+                activeRole === 'Jay'
+                  ? 'focus:ring-indigo-500 focus:border-indigo-500'
+                  : 'focus:ring-amber-500 focus:border-amber-500'
+              }`}
             />
           </div>
 
@@ -153,7 +159,11 @@ export function NewTaskModal({
               placeholder="Provide context, measurements, trade specs, or delivery notes..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-white border border-slate-300 text-xs rounded-xl px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-colors"
+              className={`w-full bg-white border border-slate-300 text-xs rounded-xl px-3 py-2 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 transition-colors ${
+                activeRole === 'Jay'
+                  ? 'focus:ring-indigo-500 focus:border-indigo-500'
+                  : 'focus:ring-amber-500 focus:border-amber-500'
+              }`}
             />
           </div>
 
@@ -239,11 +249,11 @@ export function NewTaskModal({
                   onClick={() => setAssignedTo('Jay')}
                   className={`flex-1 py-1.5 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all ${
                     assignedTo === 'Jay'
-                      ? 'bg-sky-50 text-sky-800 border-sky-300 ring-1 ring-sky-300'
+                      ? 'bg-indigo-50 text-indigo-900 border-indigo-300 ring-1 ring-indigo-300'
                       : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                   }`}
                 >
-                  <User className="w-3.5 h-3.5 text-sky-600" />
+                  <User className="w-3.5 h-3.5 text-indigo-600" />
                   <span>Jay (Homeowner)</span>
                 </button>
                 <button
@@ -348,7 +358,11 @@ export function NewTaskModal({
             </button>
             <button
               type="submit"
-              className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs rounded-xl shadow-xs hover:shadow-sm transition-all cursor-pointer"
+              className={`px-5 py-2 font-bold text-xs rounded-xl shadow-xs hover:shadow-sm transition-all cursor-pointer ${
+                activeRole === 'Jay'
+                  ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
+                  : 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+              }`}
             >
               Create Punch Item
             </button>

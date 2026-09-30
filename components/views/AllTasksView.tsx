@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { TaskWithDependencyState, TaskStatus } from '@/types/punchlist';
+import { TaskWithDependencyState, TaskStatus, UserRole } from '@/types/punchlist';
 import { TaskCard } from '../TaskCard';
 import { Search, Filter, RotateCcw, CheckCircle2 } from 'lucide-react';
 
@@ -7,9 +7,15 @@ interface AllTasksViewProps {
   tasks: TaskWithDependencyState[];
   onOpenDetails: (task: TaskWithDependencyState) => void;
   onQuickStatusChange: (taskId: string, status: TaskStatus) => void;
+  activeRole?: UserRole;
 }
 
-export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllTasksViewProps) {
+export function AllTasksView({
+  tasks,
+  onOpenDetails,
+  onQuickStatusChange,
+  activeRole = 'Jay',
+}: AllTasksViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRoom, setSelectedRoom] = useState('All');
   const [selectedTrade, setSelectedTrade] = useState('All');
@@ -88,7 +94,9 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
             placeholder="Search punch list items by title, trade, room, notes, ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+            className={`w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:bg-white transition-all ${
+              activeRole === 'Jay' ? 'focus:ring-indigo-500' : 'focus:ring-amber-500'
+            }`}
           />
         </div>
 
@@ -100,7 +108,9 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
             <select
               value={selectedRoom}
               onChange={(e) => setSelectedRoom(e.target.value)}
-              className="w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className={`w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 ${
+                activeRole === 'Jay' ? 'focus:ring-indigo-500' : 'focus:ring-amber-500'
+              }`}
             >
               {rooms.map((r) => (
                 <option key={r} value={r}>
@@ -116,7 +126,9 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
             <select
               value={selectedTrade}
               onChange={(e) => setSelectedTrade(e.target.value)}
-              className="w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className={`w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 ${
+                activeRole === 'Jay' ? 'focus:ring-indigo-500' : 'focus:ring-amber-500'
+              }`}
             >
               {trades.map((t) => (
                 <option key={t} value={t}>
@@ -132,7 +144,9 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className={`w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 ${
+                activeRole === 'Jay' ? 'focus:ring-indigo-500' : 'focus:ring-amber-500'
+              }`}
             >
               <option value="All">All Statuses</option>
               <option value="ready">Ready to Work</option>
@@ -149,7 +163,9 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
             <select
               value={blockerFilter}
               onChange={(e) => setBlockerFilter(e.target.value as any)}
-              className="w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className={`w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 ${
+                activeRole === 'Jay' ? 'focus:ring-indigo-500' : 'focus:ring-amber-500'
+              }`}
             >
               <option value="All">All Items</option>
               <option value="locked">🔒 Blocked Only</option>
@@ -168,7 +184,9 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
             <button
               type="button"
               onClick={handleResetFilters}
-              className="flex items-center gap-1.5 text-amber-700 hover:text-amber-800 font-bold transition-colors cursor-pointer"
+              className={`flex items-center gap-1.5 font-bold transition-colors cursor-pointer ${
+                activeRole === 'Jay' ? 'text-indigo-700 hover:text-indigo-800' : 'text-amber-700 hover:text-amber-800'
+              }`}
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Reset Filters</span>
@@ -194,6 +212,7 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
               task={task}
               onOpenDetails={onOpenDetails}
               onQuickStatusChange={onQuickStatusChange}
+              activeRole={activeRole}
             />
           ))}
         </div>

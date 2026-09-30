@@ -17,6 +17,7 @@ import {
   CheckCircle2,
   Lock,
   Hourglass,
+  Home,
 } from 'lucide-react';
 import { StatusBadge } from './StatusBadge';
 
@@ -53,6 +54,8 @@ export function TopFocusSection({
   onUnsnooze,
   onOpenSequences,
 }: TopFocusSectionProps) {
+  const isJay = activeRole === 'Jay';
+
   // Allow user to toggle between viewing Jay's Queue vs Joe's Queue, defaulting to activeRole
   const [selectedQueue, setSelectedQueue] = useState<UserRole>(activeRole);
   const [isSnoozedOpen, setIsSnoozedOpen] = useState(false);
@@ -67,33 +70,53 @@ export function TopFocusSection({
   const totalEligible = selectedQueue === 'Jay' ? focusQueues.jayEligible.length : focusQueues.joeEligible.length;
 
   return (
-    <div className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-7 shadow-xs space-y-6">
-      {/* Top Header Row: Title & Move-In Milestone Countdown */}
+    <div
+      className={`rounded-3xl p-5 sm:p-7 shadow-xs space-y-6 transition-all duration-200 bg-white border ${
+        isJay
+          ? 'border-indigo-200/90 shadow-indigo-100/40'
+          : 'border-amber-300/90 shadow-amber-100/40'
+      }`}
+    >
+      {/* Top Header Row: Persona Badge, Title & Move-In Milestone Countdown */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-900 border border-amber-200">
-              <Zap className="w-3 h-3 text-amber-600 fill-amber-500" />
-              Critical Path Focus
-            </span>
-            <span className="text-xs text-slate-400">•</span>
-            <span className="text-xs text-slate-500">Top 3 Immediate Action Queue</span>
+            {/* Hero Persona Badge */}
+            {isJay ? (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-900 border border-indigo-200 shadow-2xs">
+                <Home className="w-3.5 h-3.5 text-indigo-600" />
+                <span>Homeowner Mode (Jay)</span>
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-950 border border-amber-300 shadow-2xs">
+                <HardHat className="w-3.5 h-3.5 text-amber-600" />
+                <span>GC Field Mode (Joe)</span>
+              </span>
+            )}
+            <span className="text-xs text-slate-300">•</span>
+            <span className="text-xs text-slate-500 font-medium">Top 3 Immediate Action Queue</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+          <h2 className={`text-xl sm:text-2xl font-black tracking-tight ${isJay ? 'text-slate-900' : 'text-zinc-950'}`}>
             Today&apos;s Critical 3
           </h2>
         </div>
 
         {/* Move-In Hard Milestone Display */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/90 shadow-2xs">
-            <Calendar className="w-4 h-4 text-amber-600 shrink-0" />
+          <div
+            className={`flex items-center gap-2.5 px-4 py-2 rounded-2xl border shadow-2xs transition-all duration-200 ${
+              isJay
+                ? 'bg-gradient-to-r from-indigo-50 to-blue-50 border-indigo-200 text-indigo-950'
+                : 'bg-gradient-to-r from-amber-50 to-orange-50 border-amber-300 text-amber-950'
+            }`}
+          >
+            <Calendar className={`w-4 h-4 shrink-0 ${isJay ? 'text-indigo-600' : 'text-amber-600'}`} />
             <div>
-              <div className="text-[10px] uppercase font-bold text-amber-800 tracking-wider">
+              <div className={`text-[10px] uppercase font-bold tracking-wider ${isJay ? 'text-indigo-700' : 'text-amber-800'}`}>
                 Target Move-In • Nov 15, 2026
               </div>
-              <div className="text-sm font-extrabold text-slate-900 flex items-center gap-1.5">
-                <span className="text-amber-700">{moveInCountdown.daysLeft} Days</span>
+              <div className="text-sm font-extrabold flex items-center gap-1.5">
+                <span className={isJay ? 'text-indigo-800' : 'text-amber-700'}>{moveInCountdown.daysLeft} Days</span>
                 <span className="text-slate-400 font-normal text-xs">Remaining</span>
               </div>
             </div>
@@ -103,10 +126,14 @@ export function TopFocusSection({
             <button
               type="button"
               onClick={onOpenSequences}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors cursor-pointer"
+              className={`hidden lg:flex items-center gap-1.5 px-3 py-2 rounded-2xl border text-xs font-semibold transition-colors cursor-pointer ${
+                isJay
+                  ? 'bg-indigo-50/60 hover:bg-indigo-50 border-indigo-200 text-indigo-800'
+                  : 'bg-amber-50/60 hover:bg-amber-50 border-amber-200 text-amber-900'
+              }`}
             >
               <span>Sequences & Rules</span>
-              <ArrowRight className="w-3.5 h-3.5 text-slate-500" />
+              <ArrowRight className="w-3.5 h-3.5 opacity-70" />
             </button>
           )}
         </div>
@@ -120,15 +147,15 @@ export function TopFocusSection({
             onClick={() => setSelectedQueue('Jay')}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
               selectedQueue === 'Jay'
-                ? 'bg-white text-sky-900 shadow-xs'
+                ? 'bg-indigo-600 text-white shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <User className="w-3.5 h-3.5 text-sky-600" />
+            <Home className="w-3.5 h-3.5" />
             <span>Jay&apos;s Focus (Owner Queue)</span>
             <span
               className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                selectedQueue === 'Jay' ? 'bg-sky-100 text-sky-800' : 'bg-slate-200 text-slate-600'
+                selectedQueue === 'Jay' ? 'bg-indigo-700 text-white' : 'bg-slate-200 text-slate-600'
               }`}
             >
               {focusQueues.jayEligible.length}
@@ -140,15 +167,15 @@ export function TopFocusSection({
             onClick={() => setSelectedQueue('Joe')}
             className={`flex items-center gap-2 px-3.5 py-2 rounded-xl transition-all cursor-pointer ${
               selectedQueue === 'Joe'
-                ? 'bg-white text-amber-900 shadow-xs'
+                ? 'bg-amber-500 text-zinc-950 font-bold shadow-sm'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            <HardHat className="w-3.5 h-3.5 text-amber-600" />
-            <span>Joe&apos;s Focus (GC On-Site Queue)</span>
+            <HardHat className="w-3.5 h-3.5" />
+            <span>Joe&apos;s Focus (GC Field Queue)</span>
             <span
               className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                selectedQueue === 'Joe' ? 'bg-amber-100 text-amber-900' : 'bg-slate-200 text-slate-600'
+                selectedQueue === 'Joe' ? 'bg-amber-400 text-zinc-950' : 'bg-slate-200 text-slate-600'
               }`}
             >
               {focusQueues.joeEligible.length}
@@ -178,18 +205,27 @@ export function TopFocusSection({
             const isDone = task.effectiveStatus === 'done';
             const isBlocked = task.unsatisfiedBlockers.length > 0;
             const hasUnlocks = (task.unlocks && task.unlocks.length > 0) || task.dependentTasks.length > 0;
+            const isQueueJay = selectedQueue === 'Jay';
 
             return (
               <div
                 key={task.id}
                 onDoubleClick={() => onOpenDetails(task)}
-                className="group relative flex flex-col justify-between bg-slate-50/70 hover:bg-white border border-slate-200 hover:border-amber-300 rounded-2xl p-4.5 shadow-2xs hover:shadow-md transition-all duration-200"
+                className={`group relative flex flex-col justify-between rounded-2xl p-4.5 shadow-2xs hover:shadow-md transition-all duration-200 ${
+                  isQueueJay
+                    ? 'bg-slate-50/70 hover:bg-white border border-indigo-200/90 hover:border-indigo-400 hover:ring-2 hover:ring-indigo-100'
+                    : 'bg-zinc-50/70 hover:bg-white border border-amber-300/90 hover:border-amber-400 hover:ring-2 hover:ring-amber-100'
+                }`}
               >
                 {/* Priority Rank Badge & Status Row */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-lg bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center shadow-xs">
+                      <span
+                        className={`w-6 h-6 rounded-lg text-xs flex items-center justify-center shadow-xs font-bold ${
+                          isQueueJay ? 'bg-indigo-600 text-white' : 'bg-amber-500 text-zinc-950 font-black'
+                        }`}
+                      >
                         #{idx + 1}
                       </span>
                       <span className="font-mono text-[11px] font-bold text-slate-500">
@@ -212,7 +248,11 @@ export function TopFocusSection({
 
                   {/* Title & Description with Full Wrapping */}
                   <div className="space-y-1">
-                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-amber-800 transition-colors leading-snug break-words whitespace-normal">
+                    <h3
+                      className={`text-sm font-bold leading-snug break-words whitespace-normal transition-colors ${
+                        isQueueJay ? 'text-slate-900 group-hover:text-indigo-900' : 'text-slate-900 group-hover:text-amber-900'
+                      }`}
+                    >
                       {task.title}
                     </h3>
 
@@ -263,6 +303,8 @@ export function TopFocusSection({
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       isDone
                         ? 'bg-slate-200 text-slate-700 hover:bg-slate-300'
+                        : isQueueJay
+                        ? 'bg-indigo-600 text-white hover:bg-indigo-500 shadow-xs'
                         : 'bg-emerald-600 text-white hover:bg-emerald-500 shadow-xs'
                     }`}
                   >
@@ -279,9 +321,11 @@ export function TopFocusSection({
                         onSnooze(task.id, 3);
                       }}
                       title="Snooze for 3 days (removes from Top 3 and backfills next item)"
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 text-xs font-semibold transition-colors cursor-pointer"
+                      className={`flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 text-xs font-semibold transition-colors cursor-pointer ${
+                        isQueueJay ? 'hover:border-indigo-300 hover:text-indigo-900' : 'hover:border-amber-300 hover:text-amber-900'
+                      }`}
                     >
-                      <Clock className="w-3 h-3 text-amber-600" />
+                      <Clock className={`w-3 h-3 ${isQueueJay ? 'text-indigo-600' : 'text-amber-600'}`} />
                       <span>Snooze 3d</span>
                     </button>
 

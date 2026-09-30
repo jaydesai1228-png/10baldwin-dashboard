@@ -109,7 +109,13 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-amber-500 selection:text-slate-950 font-sans">
+    <div
+      className={`min-h-screen flex flex-col font-sans transition-colors duration-200 ${
+        activeRole === 'Jay'
+          ? 'theme-jay bg-slate-50 text-slate-900 selection:bg-indigo-500 selection:text-white'
+          : 'theme-joe bg-zinc-50 text-zinc-900 selection:bg-amber-500 selection:text-slate-950'
+      }`}
+    >
       {/* Sticky Header with Fast Role Switcher & Move-In Milestone */}
       <Navbar
         activeRole={activeRole}
@@ -164,11 +170,13 @@ export default function DashboardPage() {
             onClick={() => setActiveTab('burndown')}
             className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'burndown'
-                ? 'bg-amber-50 text-amber-900 border border-amber-200 shadow-xs'
+                ? activeRole === 'Jay'
+                  ? 'bg-indigo-50 text-indigo-900 border border-indigo-200 shadow-xs'
+                  : 'bg-amber-50 text-amber-900 border border-amber-200 shadow-xs'
                 : 'text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent'
             }`}
           >
-            <TrendingUp className="w-4 h-4 text-amber-600" />
+            <TrendingUp className={`w-4 h-4 ${activeRole === 'Jay' ? 'text-indigo-600' : 'text-amber-600'}`} />
             <span>Burn Down & Progress</span>
           </button>
 
@@ -226,16 +234,18 @@ export default function DashboardPage() {
             onSwitchToWaitingTab={() => setActiveTab('waiting_on')}
             onSnooze={snoozeTask}
             onUnsnooze={unsnoozeTask}
+            activeRole={activeRole}
           />
         )}
 
-        {activeTab === 'burndown' && <BurndownView tasks={tasks} />}
+        {activeTab === 'burndown' && <BurndownView tasks={tasks} activeRole={activeRole} />}
 
         {activeTab === 'waiting_on' && (
           <WaitingOnView
             tasks={tasks}
             onOpenDetails={setSelectedTask}
             onQuickStatusChange={updateTaskStatus}
+            activeRole={activeRole}
           />
         )}
 
@@ -244,6 +254,7 @@ export default function DashboardPage() {
             tasks={tasks}
             onOpenDetails={setSelectedTask}
             onQuickStatusChange={updateTaskStatus}
+            activeRole={activeRole}
           />
         )}
       </main>

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { TaskWithDependencyState, TaskStatus } from '@/types/punchlist';
+import { TaskWithDependencyState, TaskStatus, UserRole } from '@/types/punchlist';
 import { TaskCard } from '../TaskCard';
 import {
   Sparkles,
@@ -20,6 +20,7 @@ interface ReadyTodayViewProps {
   onSwitchToWaitingTab: () => void;
   onSnooze?: (taskId: string, days?: number) => void;
   onUnsnooze?: (taskId: string) => void;
+  activeRole?: UserRole;
 }
 
 type GroupByMode = 'room' | 'trade' | 'none';
@@ -31,6 +32,7 @@ export function ReadyTodayView({
   onSwitchToWaitingTab,
   onSnooze,
   onUnsnooze,
+  activeRole = 'Jay',
 }: ReadyTodayViewProps) {
   const [groupBy, setGroupBy] = useState<GroupByMode>('room');
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
@@ -240,6 +242,7 @@ export function ReadyTodayView({
                         onQuickStatusChange={onQuickStatusChange}
                         onSnooze={onSnooze}
                         onUnsnooze={onUnsnooze}
+                        activeRole={activeRole}
                       />
                     ))}
                   </div>

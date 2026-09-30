@@ -161,7 +161,9 @@ export function TaskModal({
                 type="text"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full text-lg md:text-xl font-bold bg-white border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-xs"
+                className={`w-full text-lg md:text-xl font-bold bg-white border border-slate-300 rounded-xl px-3 py-2 text-slate-900 focus:outline-none focus:ring-2 shadow-xs ${
+                  activeRole === 'Jay' ? 'focus:ring-indigo-500' : 'focus:ring-amber-500'
+                }`}
               />
             ) : (
               <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight leading-snug break-words whitespace-normal font-sans">
@@ -238,7 +240,11 @@ export function TaskModal({
                 <button
                   type="button"
                   onClick={() => onUnsnooze && onUnsnooze(task.id)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-xs transition-colors cursor-pointer"
+                  className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl font-bold text-xs shadow-xs transition-colors cursor-pointer ${
+                    activeRole === 'Jay'
+                      ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
+                      : 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+                  }`}
                 >
                   <RotateCcw className="w-3.5 h-3.5" />
                   <span>Un-snooze Now</span>
@@ -249,7 +255,7 @@ export function TaskModal({
                   onClick={() => onSnooze && onSnooze(task.id, 3)}
                   className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-semibold text-xs shadow-2xs transition-colors cursor-pointer"
                 >
-                  <Clock className="w-3.5 h-3.5 text-amber-600" />
+                  <Clock className={`w-3.5 h-3.5 ${activeRole === 'Jay' ? 'text-indigo-600' : 'text-amber-600'}`} />
                   <span>Snooze 3 Days</span>
                 </button>
               )}
@@ -539,7 +545,7 @@ export function TaskModal({
           <div className="bg-slate-50 p-4 md:p-5 rounded-2xl border border-slate-200 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <MessageSquare className="w-4 h-4 text-sky-600" />
+                <MessageSquare className={`w-4 h-4 ${activeRole === 'Jay' ? 'text-indigo-600' : 'text-amber-600'}`} />
                 <h3 className="text-sm font-bold text-slate-900">Jobsite Field Notes</h3>
               </div>
               <span className="text-xs font-semibold text-slate-500">
@@ -565,7 +571,7 @@ export function TaskModal({
                           className={`w-5 h-5 rounded-full flex items-center justify-center font-bold text-[10px] ${
                             note.author === 'Joe'
                               ? 'bg-amber-100 text-amber-800'
-                              : 'bg-sky-100 text-sky-800'
+                              : 'bg-indigo-100 text-indigo-800'
                           }`}
                         >
                           {note.author === 'Joe' ? 'J' : 'J'}
@@ -574,7 +580,7 @@ export function TaskModal({
                           className={`font-bold px-2 py-0.5 rounded ${
                             note.author === 'Joe'
                               ? 'bg-amber-50 text-amber-800 border border-amber-200'
-                              : 'bg-sky-50 text-sky-800 border border-sky-200'
+                              : 'bg-indigo-50 text-indigo-800 border border-indigo-200'
                           }`}
                         >
                           {note.author} {note.author === 'Joe' ? '(GC)' : '(Homeowner)'}
@@ -598,22 +604,42 @@ export function TaskModal({
             </div>
 
             {/* Note Input */}
-            <form onSubmit={handleSendNote} className="flex gap-2 pt-1">
-              <input
-                type="text"
-                placeholder={`Post update as ${activeRole}...`}
-                value={noteText}
-                onChange={(e) => setNoteText(e.target.value)}
-                className="flex-1 bg-white border border-slate-300 text-xs rounded-xl px-3.5 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 shadow-xs"
-              />
-              <button
-                type="submit"
-                disabled={!noteText.trim()}
-                className="px-4 py-2.5 bg-amber-500 hover:bg-amber-400 disabled:opacity-40 text-slate-950 font-bold rounded-xl text-xs transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
-              >
-                <Send className="w-3.5 h-3.5" />
-                <span>Post</span>
-              </button>
+            <form onSubmit={handleSendNote} className="space-y-2 pt-1">
+              <div className="flex items-center justify-between text-xs">
+                <span
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-colors ${
+                    activeRole === 'Jay'
+                      ? 'bg-indigo-50 text-indigo-800 border-indigo-200'
+                      : 'bg-amber-50 text-amber-900 border-amber-300'
+                  }`}
+                >
+                  {activeRole === 'Jay' ? <User className="w-3.5 h-3.5 text-indigo-600" /> : <HardHat className="w-3.5 h-3.5 text-amber-600" />}
+                  <span>Posting note as {activeRole} ({activeRole === 'Jay' ? 'Homeowner' : 'GC'})</span>
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder={`Post update or field measurement as ${activeRole}...`}
+                  value={noteText}
+                  onChange={(e) => setNoteText(e.target.value)}
+                  className={`flex-1 bg-white border border-slate-300 text-xs rounded-xl px-3.5 py-2.5 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 shadow-xs transition-colors ${
+                    activeRole === 'Jay' ? 'focus:ring-indigo-500' : 'focus:ring-amber-500'
+                  }`}
+                />
+                <button
+                  type="submit"
+                  disabled={!noteText.trim()}
+                  className={`px-4 py-2.5 disabled:opacity-40 font-bold rounded-xl text-xs transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs ${
+                    activeRole === 'Jay'
+                      ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
+                      : 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+                  }`}
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>Post</span>
+                </button>
+              </div>
             </form>
           </div>
         </div>

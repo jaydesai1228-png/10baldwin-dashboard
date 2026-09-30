@@ -1,5 +1,5 @@
 import React from 'react';
-import { TaskWithDependencyState, TaskStatus } from '@/types/punchlist';
+import { TaskWithDependencyState, TaskStatus, UserRole } from '@/types/punchlist';
 import { StatusBadge } from './StatusBadge';
 import {
   Lock,
@@ -23,13 +23,15 @@ interface TaskCardProps {
   onQuickStatusChange: (taskId: string, status: TaskStatus) => void;
   onSnooze?: (taskId: string, days?: number) => void;
   onUnsnooze?: (taskId: string) => void;
+  activeRole?: UserRole;
 }
 
-export function TaskCard({ task, onOpenDetails, onQuickStatusChange, onSnooze, onUnsnooze }: TaskCardProps) {
+export function TaskCard({ task, onOpenDetails, onQuickStatusChange, onSnooze, onUnsnooze, activeRole = 'Jay' }: TaskCardProps) {
   const isHardBlocked = task.unsatisfiedBlockers.length > 0;
   const isDone = task.effectiveStatus === 'done';
   const isInProgress = task.effectiveStatus === 'in_progress';
   const isReady = task.effectiveStatus === 'ready';
+  const isJay = activeRole === 'Jay';
 
   const isWaiting = Boolean(task.waiting_on && task.waiting_on.isWaiting !== false);
 
@@ -50,6 +52,8 @@ export function TaskCard({ task, onOpenDetails, onQuickStatusChange, onSnooze, o
           ? 'bg-slate-50/80 border-slate-200 opacity-80 hover:opacity-100 hover:border-slate-300 shadow-xs'
           : isHardBlocked
           ? 'bg-white border-rose-200/80 hover:border-rose-300 hover:ring-2 hover:ring-rose-50 hover:shadow-md'
+          : isJay
+          ? 'bg-white border-slate-200 hover:border-indigo-400 hover:ring-2 hover:ring-indigo-100 hover:shadow-md'
           : 'bg-white border-slate-200 hover:border-amber-400 hover:ring-2 hover:ring-amber-100 hover:shadow-md'
       }`}
     >
@@ -132,7 +136,11 @@ export function TaskCard({ task, onOpenDetails, onQuickStatusChange, onSnooze, o
                 : isHardBlocked
                 ? 'bg-rose-50 border-rose-300 text-rose-400 cursor-not-allowed'
                 : isInProgress
-                ? 'bg-amber-500 border-amber-500 text-white shadow-xs'
+                ? isJay
+                  ? 'bg-indigo-600 border-indigo-600 text-white shadow-xs'
+                  : 'bg-amber-500 border-amber-500 text-slate-950 shadow-xs'
+                : isJay
+                ? 'bg-white border-slate-300 text-transparent hover:border-indigo-500 hover:text-indigo-500'
                 : 'bg-white border-slate-300 text-transparent hover:border-amber-500 hover:text-amber-500'
             }`}
           >
@@ -149,8 +157,12 @@ export function TaskCard({ task, onOpenDetails, onQuickStatusChange, onSnooze, o
 
           {/* Title - Fully Wrapped & Legible */}
           <h3
-            className={`text-base md:text-lg font-semibold leading-snug tracking-tight break-words whitespace-normal transition-colors group-hover:text-amber-800 ${
-              isDone ? 'line-through text-slate-400' : 'text-slate-900'
+            className={`text-base md:text-lg font-semibold leading-snug tracking-tight break-words whitespace-normal transition-colors ${
+              isDone
+                ? 'line-through text-slate-400'
+                : isJay
+                ? 'text-slate-900 group-hover:text-indigo-900'
+                : 'text-slate-900 group-hover:text-amber-900'
             }`}
           >
             {task.title}
@@ -294,9 +306,13 @@ export function TaskCard({ task, onOpenDetails, onQuickStatusChange, onSnooze, o
             <button
               type="button"
               onClick={() => onQuickStatusChange(task.id, 'in_progress')}
-              className="inline-flex items-center gap-1 px-3 py-1 text-xs font-bold rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-xs transition-colors"
+              className={`inline-flex items-center gap-1 px-3 py-1 text-xs font-bold rounded-lg shadow-xs transition-colors ${
+                isJay
+                  ? 'bg-indigo-600 hover:bg-indigo-500 text-white'
+                  : 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+              }`}
             >
-              <Play className="w-3 h-3 fill-slate-950" />
+              <Play className={`w-3 h-3 ${isJay ? 'fill-white' : 'fill-slate-950'}`} />
               <span>Start</span>
             </button>
           )}
