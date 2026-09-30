@@ -1,27 +1,18 @@
 import { Task } from '@/types/punchlist';
 
 export const INITIAL_TASKS: Task[] = [
-  // ==========================================
   // 1. EXTERIOR, ENVELOPE & SITE (CLEAR FOR CO)
-  // ==========================================
   {
     id: 'EXT-STUCCO-HVAC',
     title: 'Complete exterior stucco on HVAC side wall (drop scaffolding)',
     room: 'Exterior HVAC Side',
     trade: 'Stucco',
     outcome: 'Exterior Envelope',
-    task_owner: 'Joe',
+    task_owner: 'External',
     status: 'in_progress',
     blocked_by: [],
     unlocks: ['EXT-CONDENSER-4', 'EXT-RADON', 'EXT-BASEMENT-LEAKS'],
-    notes: [
-      {
-        id: 'n1',
-        author: 'Joe',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Scaffolding on HVAC side must come down first before 4th condenser can be set.'
-      }
-    ]
+    notes: [{ id: 'n1', author: 'Joe', timestamp: '2026-09-30T12:00:00.000Z', text: 'Scaffolding on HVAC side must come down first before 4th condenser can be set.' }]
   },
   {
     id: 'EXT-STUCCO-REAR',
@@ -29,7 +20,7 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Exterior Rear',
     trade: 'Stucco',
     outcome: 'Exterior Envelope',
-    task_owner: 'Joe',
+    task_owner: 'External',
     status: 'ready',
     blocked_by: [],
     unlocks: ['EXT-BILCO', 'EXT-DECK-CO', 'EXT-COMCAST', 'EXT-GRADING'],
@@ -57,14 +48,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'blocked',
     blocked_by: ['EXT-CONDENSER-4'],
     unlocks: [],
-    notes: [
-      {
-        id: 'n2',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Coordinate once trench path and condenser areas are fully clear.'
-      }
-    ]
+    notes: [{ id: 'n2', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Coordinate once trench path and condenser areas are fully clear.' }]
   },
   {
     id: 'EXT-RADON',
@@ -76,14 +60,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'blocked',
     blocked_by: ['EXT-STUCCO-HVAC'],
     unlocks: [],
-    notes: [
-      {
-        id: 'n3',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'If piping exits HVAC side, start once scaffold drops. If rear, wait for rear stucco.'
-      }
-    ]
+    notes: [{ id: 'n3', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Route out HVAC side once scaffold drops. If rear, wait for rear stucco.' }]
   },
   {
     id: 'EXT-BASEMENT-LEAKS',
@@ -127,7 +104,7 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Exterior Rear',
     trade: 'Low-Voltage',
     outcome: 'Electrical & Smart',
-    task_owner: 'External',
+    task_owner: 'Jay',
     status: 'blocked',
     blocked_by: ['EXT-STUCCO-REAR'],
     unlocks: [],
@@ -143,14 +120,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'ready',
     blocked_by: [],
     unlocks: ['EXT-GRADING', 'EXT-GUTTERS'],
-    notes: [
-      {
-        id: 'n4',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Drainage piping must be completed before final surface grading.'
-      }
-    ]
+    notes: [{ id: 'n4', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Drainage piping must be completed before final surface grading.' }]
   },
   {
     id: 'EXT-GRADING',
@@ -186,16 +156,11 @@ export const INITIAL_TASKS: Task[] = [
     status: 'ready',
     blocked_by: [],
     unlocks: [],
-    waiting_on: {
-      owner: 'Joe',
-      description: 'Schedule septic contractor for water jetting, pumping, and D-box inspection'
-    },
+    waiting_on: { owner: 'Joe', description: 'Schedule septic contractor for water jetting, pumping, and D-box inspection' },
     notes: []
   },
 
-  // ==========================================
   // 2. FLOORING, SUBFLOORS, DOORS & TRIM
-  // ==========================================
   {
     id: 'FLR-THRESHOLDS-2ND',
     title: 'Set stone transition thresholds in Son, Daughter, and Laundry doorways',
@@ -206,14 +171,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'ready',
     blocked_by: [],
     unlocks: ['FLR-SUBFLOOR-BUILD', 'BATH-DAUGHTER-TILE-FLR', 'BATH-SON-TILE-FLR', 'LNDRY-TILE-FLR'],
-    notes: [
-      {
-        id: 'n5',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Critical benchmark datum. Stone threshold sets exact finished height for subfloor buildup and bathroom tile cutoffs.'
-      }
-    ]
+    notes: [{ id: 'n5', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Critical datum point. Sets exact height for subfloor buildup and tile cutoffs.' }]
   },
   {
     id: 'FLR-SUBFLOOR-BUILD',
@@ -225,14 +183,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'blocked',
     blocked_by: ['FLR-THRESHOLDS-2ND'],
     unlocks: ['FLR-HARDWOOD-2ND'],
-    notes: [
-      {
-        id: 'n6',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Goal: hardwood floor, stone threshold, and bathroom tile are 100% flush and level.'
-      }
-    ]
+    notes: [{ id: 'n6', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Goal: hardwood, stone threshold, and tile floors are 100% flush and level.' }]
   },
   {
     id: 'FLR-HARDWOOD-2ND',
@@ -268,14 +219,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'ready',
     blocked_by: [],
     unlocks: [],
-    notes: [
-      {
-        id: 'n7',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Treads ordered (delivery mid/late October). Need temp rails up for CO.'
-      }
-    ]
+    notes: [{ id: 'n7', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Treads delivery mid/late Oct. Temp rails required for CO.' }]
   },
   {
     id: 'DOORS-INTERIOR-ORDER',
@@ -287,10 +231,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'pending_external',
     blocked_by: [],
     unlocks: ['DOORS-INTERIOR-INSTALL'],
-    waiting_on: {
-      owner: 'Jay',
-      description: 'Lock in door model, jambs, casing profiles, handles, and hinges'
-    },
+    waiting_on: { owner: 'Jay', description: 'Lock in door model, jambs, casing profiles, handles, and hinges' },
     notes: []
   },
   {
@@ -315,19 +256,10 @@ export const INITIAL_TASKS: Task[] = [
     status: 'blocked',
     blocked_by: ['DOORS-INTERIOR-INSTALL'],
     unlocks: ['BATH-SON-WALLS', 'BATH-DAUGHTER-WALLS', 'BATH-PRIMARY-WALLS', 'BATH-GUEST-WALLS'],
-    notes: [
-      {
-        id: 'n8',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Mandatory start/stop boundary for all bathroom wall tile.'
-      }
-    ]
+    notes: [{ id: 'n8', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Mandatory start/stop boundary for all bathroom wall tile.' }]
   },
 
-  // ==========================================
   // 3. BATHROOM EXECUTION MATRIX
-  // ==========================================
   {
     id: 'BATH-SON-DELIVERY',
     title: 'Receive Son’s bathroom floor tile delivery on site',
@@ -338,10 +270,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'pending_external',
     blocked_by: [],
     unlocks: ['BATH-SON-TILE-FLR'],
-    waiting_on: {
-      owner: 'Jay',
-      description: 'Track shipment and confirm on-site delivery of Son bath floor tile'
-    },
+    waiting_on: { owner: 'Jay', description: 'Track shipment and confirm delivery of Son bath floor tile' },
     notes: []
   },
   {
@@ -374,14 +303,11 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Guest Bath',
     trade: 'Tile',
     outcome: 'Close Out Bathrooms',
-    task_owner: 'Jay',
+    task_owner: 'Purvi',
     status: 'pending_external',
     blocked_by: [],
     unlocks: ['BATH-GUEST-FLR'],
-    waiting_on: {
-      owner: 'Jay',
-      description: 'Select tile spec and submit purchase order for guest bath'
-    },
+    waiting_on: { owner: 'Purvi', description: 'Select tile spec and order material for guest bath' },
     notes: []
   },
   {
@@ -406,14 +332,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'ready',
     blocked_by: [],
     unlocks: ['BATH-PRIMARY-WALLS'],
-    notes: [
-      {
-        id: 'n9',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Level 5 drywall skim required in Primary Bath. Standard finish in other baths.'
-      }
-    ]
+    notes: [{ id: 'n9', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Level 5 drywall skim required in Primary Bath only. Waived in others.' }]
   },
   {
     id: 'BATH-DECISIONS-ROUGHIN',
@@ -425,18 +344,8 @@ export const INITIAL_TASKS: Task[] = [
     status: 'pending_external',
     blocked_by: [],
     unlocks: ['BATH-SON-WALLS', 'BATH-DAUGHTER-WALLS', 'BATH-PRIMARY-WALLS', 'BATH-GUEST-WALLS'],
-    waiting_on: {
-      owner: 'Jay',
-      description: 'Lock mirror dimensions across all bathrooms to confirm sconce backbox spacing'
-    },
-    notes: [
-      {
-        id: 'n10',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Wall tile cuts cannot be made without exact fixture, sconce, and valve penetrations.'
-      }
-    ]
+    waiting_on: { owner: 'Jay', description: 'Lock mirror dimensions across all bathrooms to confirm sconce backbox spacing' },
+    notes: [{ id: 'n10', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Wall tile cuts cannot be made without exact fixture penetrations.' }]
   },
   {
     id: 'BATH-SON-WALLS',
@@ -496,14 +405,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'ready',
     blocked_by: [],
     unlocks: [],
-    notes: [
-      {
-        id: 'n11',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Level 5 drywall skim waived; standard finish.'
-      }
-    ]
+    notes: []
   },
   {
     id: 'BATH-PLAYROOM-TRIMOUT',
@@ -515,14 +417,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'ready',
     blocked_by: [],
     unlocks: [],
-    notes: [
-      {
-        id: 'n12',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Level 5 drywall skim waived; standard finish.'
-      }
-    ]
+    notes: []
   },
   {
     id: 'BATH-SON-TRIMOUT',
@@ -573,9 +468,7 @@ export const INITIAL_TASKS: Task[] = [
     notes: []
   },
 
-  // ==========================================
   // 4. KITCHEN, PANTRY & MILLWORK
-  // ==========================================
   {
     id: 'KTCH-COUNTERS',
     title: 'Template, fabricate, and install kitchen countertops',
@@ -586,14 +479,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'ready',
     blocked_by: [],
     unlocks: ['KTCH-ARCH-FRAMING'],
-    notes: [
-      {
-        id: 'n13',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Give stone fabricators LED wire penetration specs before cutting.'
-      }
-    ]
+    notes: [{ id: 'n13', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Coordinate LED strip wire feeds with fabricators before cutting stone.' }]
   },
   {
     id: 'KTCH-ARCH-FRAMING',
@@ -605,14 +491,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'blocked',
     blocked_by: ['KTCH-COUNTERS'],
     unlocks: [],
-    notes: [
-      {
-        id: 'n14',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Requires kitchen counter installed first to align arch framing plumb to the countertop.'
-      }
-    ]
+    notes: [{ id: 'n14', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Requires counter set to frame arch plumb.' }]
   },
   {
     id: 'KTCH-DRYWALL-L5',
@@ -632,7 +511,7 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Pantry',
     trade: 'Carpentry',
     outcome: 'Millwork & Surfaces',
-    task_owner: 'Jay',
+    task_owner: 'Joe',
     status: 'ready',
     blocked_by: [],
     unlocks: ['PANTRY-COUNTER'],
@@ -644,7 +523,7 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Pantry',
     trade: 'Stone',
     outcome: 'Millwork & Surfaces',
-    task_owner: 'Jay',
+    task_owner: 'Joe',
     status: 'blocked',
     blocked_by: ['PANTRY-CABINETS'],
     unlocks: [],
@@ -656,14 +535,11 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Pantry',
     trade: 'Appliances',
     outcome: 'Millwork & Surfaces',
-    task_owner: 'Jay',
+    task_owner: 'Purvi',
     status: 'pending_external',
     blocked_by: [],
     unlocks: [],
-    waiting_on: {
-      owner: 'Jay',
-      description: 'Select and purchase pantry refrigerator'
-    },
+    waiting_on: { owner: 'Purvi', description: 'Select and order pantry auxiliary refrigerator' },
     notes: []
   },
   {
@@ -672,7 +548,7 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Laundry Room',
     trade: 'Carpentry',
     outcome: 'Millwork & Surfaces',
-    task_owner: 'Jay',
+    task_owner: 'Joe',
     status: 'ready',
     blocked_by: [],
     unlocks: ['LNDRY-COUNTER'],
@@ -684,14 +560,11 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Laundry Room',
     trade: 'Millwork',
     outcome: 'Millwork & Surfaces',
-    task_owner: 'Jay',
+    task_owner: 'Purvi',
     status: 'pending_external',
     blocked_by: ['LNDRY-CABINETS'],
     unlocks: [],
-    waiting_on: {
-      owner: 'Jay',
-      description: 'Visit butcher block supplier to finalize laundry counter slab'
-    },
+    waiting_on: { owner: 'Purvi', description: 'Visit butcher block supplier to finalize laundry counter slab' },
     notes: []
   },
   {
@@ -716,10 +589,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'pending_external',
     blocked_by: [],
     unlocks: [],
-    waiting_on: {
-      owner: 'Purvi',
-      description: 'Finalize layout and place order for Purvi office cabinets'
-    },
+    waiting_on: { owner: 'Purvi', description: 'Finalize layout and order Purvi office cabinets' },
     notes: []
   },
   {
@@ -728,20 +598,15 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Primary Suite',
     trade: 'Carpentry',
     outcome: 'Millwork & Surfaces',
-    task_owner: 'Jay',
+    task_owner: 'Purvi',
     status: 'pending_external',
     blocked_by: [],
     unlocks: [],
-    waiting_on: {
-      owner: 'Jay',
-      description: 'Verify if crown molding impacts closet or trim installations before ordering'
-    },
+    waiting_on: { owner: 'Purvi', description: 'Verify aesthetic profile and closet clearance before ordering' },
     notes: []
   },
 
-  // ==========================================
   // 5. ELECTRICAL, HVAC, LOW-VOLTAGE & MEP
-  // ==========================================
   {
     id: 'FOYER-SCAFFOLD-CHANDELIER',
     title: 'Clean and reinstall foyer scaffold; hang foyer chandelier',
@@ -752,14 +617,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'ready',
     blocked_by: [],
     unlocks: ['FOYER-COFFERED-TRIM'],
-    notes: [
-      {
-        id: 'n15',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Clean scaffold must be set to hang chandelier safely before ceiling trim.'
-      }
-    ]
+    notes: [{ id: 'n15', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Clean scaffold must be set to hang chandelier safely before ceiling trim.' }]
   },
   {
     id: 'FOYER-COFFERED-TRIM',
@@ -795,10 +653,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'pending_external',
     blocked_by: [],
     unlocks: ['FIREPLACE-CLEAN-INSTALL'],
-    waiting_on: {
-      owner: 'Joe',
-      description: 'Follow up with Moorestown building department for permit sign-off'
-    },
+    waiting_on: { owner: 'Township', description: 'Moorestown building department permit approval' },
     notes: []
   },
   {
@@ -811,14 +666,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'blocked',
     blocked_by: ['FIREPLACE-PERMIT'],
     unlocks: [],
-    notes: [
-      {
-        id: 'n16',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Fireplace area needs thorough cleaning and debris removal.'
-      }
-    ]
+    notes: [{ id: 'n16', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Fireplace area needs thorough cleaning and debris removal.' }]
   },
   {
     id: 'WATER-TREATMENT-INSTALL',
@@ -830,10 +678,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'pending_external',
     blocked_by: [],
     unlocks: [],
-    waiting_on: {
-      owner: 'Joe',
-      description: 'Demand installation date and equipment delivery schedule from water treatment contractor'
-    },
+    waiting_on: { owner: 'Joe', description: 'Demand delivery and install date from water treatment vendor' },
     notes: []
   },
   {
@@ -866,18 +711,11 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Entire House',
     trade: 'Electrical',
     outcome: 'Electrical & Smart',
-    task_owner: 'Joe',
+    task_owner: 'Jay',
     status: 'ready',
     blocked_by: [],
     unlocks: [],
-    notes: [
-      {
-        id: 'n17',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Lighting positions mostly set; electrician to flag any missing locations to Jay.'
-      }
-    ]
+    notes: [{ id: 'n17', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Lighting positions mostly set; electrician to flag missing locations to Jay.' }]
   },
   {
     id: 'ELEC-CENTER-LIGHTS-TEMP',
@@ -897,7 +735,7 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Kitchen / Halls',
     trade: 'Electrical',
     outcome: 'Electrical & Smart',
-    task_owner: 'Joe',
+    task_owner: 'Jay',
     status: 'ready',
     blocked_by: [],
     unlocks: [],
@@ -921,7 +759,7 @@ export const INITIAL_TASKS: Task[] = [
     room: 'Entire House',
     trade: 'Low-Voltage',
     outcome: 'Electrical & Smart',
-    task_owner: 'Joe',
+    task_owner: 'Jay',
     status: 'ready',
     blocked_by: [],
     unlocks: ['LOWVOLT-HARDWARE-INSTALL'],
@@ -940,9 +778,7 @@ export const INITIAL_TASKS: Task[] = [
     notes: []
   },
 
-  // ==========================================
   // 6. MUDROOM, BASEMENT, GARAGE & CLEANUP
-  // ==========================================
   {
     id: 'MUDROOM-DOOR-ORDER',
     title: 'Order mudroom exterior door (~6-week lead time)',
@@ -953,18 +789,8 @@ export const INITIAL_TASKS: Task[] = [
     status: 'pending_external',
     blocked_by: [],
     unlocks: [],
-    waiting_on: {
-      owner: 'Jay',
-      description: 'Lock in spec and place 6-week mudroom door order'
-    },
-    notes: [
-      {
-        id: 'n18',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Non-blocking for CO, but order needs to be placed now.'
-      }
-    ]
+    waiting_on: { owner: 'Jay', description: 'Lock in spec and place 6-week mudroom door order' },
+    notes: [{ id: 'n18', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Non-blocking for CO, but order needs to be placed now.' }]
   },
   {
     id: 'MUDROOM-HEATED-FLOOR-TILE',
@@ -976,14 +802,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'blocked',
     blocked_by: [],
     unlocks: [],
-    notes: [
-      {
-        id: 'n19',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'One of the last finish tasks. Do not tile early to avoid damage from trade foot traffic.'
-      }
-    ]
+    notes: [{ id: 'n19', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Hold until near end of project to protect from trade foot traffic.' }]
   },
   {
     id: 'CLEANUP-SPACKLE',
@@ -1031,14 +850,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'ready',
     blocked_by: [],
     unlocks: [],
-    notes: [
-      {
-        id: 'n20',
-        author: 'Jay',
-        timestamp: '2026-09-29T23:00:00.000Z',
-        text: 'Nice to have / non-critical for CO.'
-      }
-    ]
+    notes: [{ id: 'n20', author: 'Jay', timestamp: '2026-09-30T12:00:00.000Z', text: 'Nice to have / non-critical for CO.' }]
   },
   {
     id: 'CHASE-HOMEDEPOT-SUBSTITUTES',
@@ -1050,10 +862,7 @@ export const INITIAL_TASKS: Task[] = [
     status: 'pending_external',
     blocked_by: [],
     unlocks: [],
-    waiting_on: {
-      owner: 'Jay',
-      description: 'Review unfulfilled Home Depot items and source from alternative vendors'
-    },
+    waiting_on: { owner: 'Jay', description: 'Review unfulfilled Home Depot items and source from alternative suppliers' },
     notes: []
   }
 ];
