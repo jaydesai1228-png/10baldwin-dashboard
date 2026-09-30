@@ -53,6 +53,12 @@ export function WaitingOnView({
       color: 'bg-amber-50 text-amber-800 border-amber-200',
       badge: 'Subcontractor / Trade Lead',
     },
+    Purvi: {
+      label: 'Purvi (Owner / Design)',
+      icon: <User className="w-4 h-4 text-rose-700" />,
+      color: 'bg-rose-50 text-rose-800 border-rose-200',
+      badge: 'Design / Office Spec',
+    },
     Township: {
       label: 'Township / Municipal',
       icon: <Building2 className="w-4 h-4 text-purple-700" />,

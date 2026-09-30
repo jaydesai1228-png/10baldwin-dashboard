@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { PunchTask, TaskStatus, UserRole, TaskWithDependencyState, FieldNote } from '@/types/punchlist';
+import { PunchTask, TaskStatus, UserRole, TaskWithDependencyState, FieldNote, TaskOwner } from '@/types/punchlist';
 import { INITIAL_TASKS } from '@/lib/seed-data';
 import {
   computeDependencyGraph,
@@ -31,7 +31,11 @@ export function usePunchList() {
       if (savedTasks) {
         const parsed = JSON.parse(savedTasks);
         if (Array.isArray(parsed) && parsed.length > 0) {
-          setTasks(parsed);
+          const normalized = parsed.map((t: PunchTask) => ({
+            ...t,
+            task_owner: t.task_owner || (t.assigned_to as TaskOwner) || 'Joe',
+          }));
+          setTasks(normalized);
           setIsLoaded(true);
           return;
         }
@@ -45,9 +49,13 @@ export function usePunchList() {
       .then((res) => res.json())
       .then((data) => {
         if (data && Array.isArray(data.tasks) && data.tasks.length > 0) {
-          setTasks(data.tasks);
+          const normalized = data.tasks.map((t: PunchTask) => ({
+            ...t,
+            task_owner: t.task_owner || (t.assigned_to as TaskOwner) || 'Joe',
+          }));
+          setTasks(normalized);
           try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data.tasks));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
           } catch {
             // ignore
           }
@@ -172,6 +180,7 @@ export function usePunchList() {
         room: taskData.room || 'General',
         trade: taskData.trade || 'General GC',
         outcome: taskData.outcome || 'Trim & Finishes',
+        task_owner: taskData.task_owner || (activeRole as TaskOwner) || 'Joe',
         status: taskData.status || 'ready',
         priority: taskData.priority || 'medium',
         blocked_by: taskData.blocked_by || [],

@@ -1,5 +1,6 @@
 export type TaskStatus = 'blocked' | 'ready' | 'in_progress' | 'pending_external' | 'done';
-export type OwnerRole = 'Jay' | 'Joe' | 'Trade' | 'Supplier' | 'Township';
+export type TaskOwner = 'Joe' | 'Jay' | 'Purvi' | 'External';
+export type OwnerRole = 'Jay' | 'Joe' | 'Purvi' | 'Trade' | 'Supplier' | 'Township';
 
 export interface TaskNote {
   id: string;
@@ -10,7 +11,7 @@ export interface TaskNote {
 }
 
 export interface WaitingOnMetadata {
-  owner: OwnerRole | string;
+  owner: 'Jay' | 'Joe' | 'Purvi' | 'Trade' | 'Supplier' | 'Township';
   description: string;
   target_date?: string;
   // Optional backwards compatibility fields
@@ -25,11 +26,12 @@ export interface Task {
   room: string;
   trade: string;
   outcome: string;
+  task_owner: TaskOwner;          // Explicit accountability lead
   blocked_by: string[];
   unlocks: string[];
   status: TaskStatus;
   waiting_on?: WaitingOnMetadata;
-  dismissed_until?: string;
+  dismissed_until?: string;       // ISO timestamp for 3-day snooze
   notes: TaskNote[];
   // Backwards compatibility for UI and metadata
   description?: string;
@@ -43,7 +45,7 @@ export interface Task {
 export type PunchTask = Task;
 export type FieldNote = TaskNote;
 export type UserRole = 'Jay' | 'Joe';
-export type WaitingOnOwner = OwnerRole | string;
+export type WaitingOnOwner = 'Jay' | 'Joe' | 'Purvi' | 'Trade' | 'Supplier' | 'Township';
 export type Priority = 'high' | 'medium' | 'low';
 
 export interface TaskWithDependencyState extends Task {

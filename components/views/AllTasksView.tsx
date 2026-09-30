@@ -17,6 +17,7 @@ export function AllTasksView({
   activeRole = 'Jay',
 }: AllTasksViewProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedOwner, setSelectedOwner] = useState('All');
   const [selectedRoom, setSelectedRoom] = useState('All');
   const [selectedTrade, setSelectedTrade] = useState('All');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
@@ -45,10 +46,14 @@ export function AllTasksView({
         const matchesId = task.id.toLowerCase().includes(query);
         const matchesRoom = task.room.toLowerCase().includes(query);
         const matchesTrade = task.trade.toLowerCase().includes(query);
-        if (!matchesTitle && !matchesDesc && !matchesId && !matchesRoom && !matchesTrade) {
+        const matchesOwner = (task.task_owner || '').toLowerCase().includes(query);
+        if (!matchesTitle && !matchesDesc && !matchesId && !matchesRoom && !matchesTrade && !matchesOwner) {
           return false;
         }
       }
+
+      // Owner
+      if (selectedOwner !== 'All' && task.task_owner !== selectedOwner) return false;
 
       // Room
       if (selectedRoom !== 'All' && task.room !== selectedRoom) return false;
@@ -65,10 +70,11 @@ export function AllTasksView({
 
       return true;
     });
-  }, [tasks, searchQuery, selectedRoom, selectedTrade, selectedStatus, blockerFilter]);
+  }, [tasks, searchQuery, selectedOwner, selectedRoom, selectedTrade, selectedStatus, blockerFilter]);
 
   const handleResetFilters = () => {
     setSearchQuery('');
+    setSelectedOwner('All');
     setSelectedRoom('All');
     setSelectedTrade('All');
     setSelectedStatus('All');
@@ -77,6 +83,7 @@ export function AllTasksView({
 
   const hasActiveFilters =
     searchQuery ||
+    selectedOwner !== 'All' ||
     selectedRoom !== 'All' ||
     selectedTrade !== 'All' ||
     selectedStatus !== 'All' ||
@@ -101,7 +108,25 @@ export function AllTasksView({
         </div>
 
         {/* Dropdown Filters Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-1">
+          {/* Owner */}
+          <div>
+            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Owner</label>
+            <select
+              value={selectedOwner}
+              onChange={(e) => setSelectedOwner(e.target.value)}
+              className={`w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 ${
+                activeRole === 'Jay' ? 'focus:ring-indigo-500' : 'focus:ring-amber-500'
+              }`}
+            >
+              <option value="All">All Owners</option>
+              <option value="Joe">Joe (GC Lead)</option>
+              <option value="Jay">Jay (Owner)</option>
+              <option value="Purvi">Purvi</option>
+              <option value="External">External (Township/Utility)</option>
+            </select>
+          </div>
+
           {/* Room */}
           <div>
             <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Room</label>

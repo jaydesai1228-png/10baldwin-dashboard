@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { PunchTask, TaskWithDependencyState, Priority, WaitingOnOwner } from '@/types/punchlist';
-import { X, Plus, Lock, User, HardHat } from 'lucide-react';
+import { PunchTask, TaskWithDependencyState, Priority, WaitingOnOwner, TaskOwner } from '@/types/punchlist';
+import { X, Plus, Lock, User, HardHat, Globe } from 'lucide-react';
 
 interface NewTaskModalProps {
   isOpen: boolean;
@@ -56,7 +56,7 @@ export function NewTaskModal({
   const [trade, setTrade] = useState(COMMON_TRADES[0]);
   const [outcome, setOutcome] = useState(COMMON_OUTCOMES[3]);
   const [priority, setPriority] = useState<Priority>('medium');
-  const [assignedTo, setAssignedTo] = useState<'Jay' | 'Joe'>(activeRole);
+  const [taskOwner, setTaskOwner] = useState<TaskOwner>(activeRole as TaskOwner);
   const [selectedBlockers, setSelectedBlockers] = useState<string[]>([]);
 
   // Waiting on
@@ -77,13 +77,13 @@ export function NewTaskModal({
       trade,
       outcome,
       priority,
+      task_owner: taskOwner,
       status: isWaiting ? 'pending_external' : selectedBlockers.length > 0 ? 'blocked' : 'ready',
       blocked_by: selectedBlockers,
       unlocks: [],
-      assigned_to: assignedTo,
+      assigned_to: taskOwner,
       waiting_on: isWaiting
         ? {
-            isWaiting: true,
             owner: waitingOwner,
             description: waitingDesc,
           }
@@ -242,31 +242,55 @@ export function NewTaskModal({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Assignee</label>
-              <div className="flex gap-2">
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Accountability Lead (Task Owner)</label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <button
                   type="button"
-                  onClick={() => setAssignedTo('Jay')}
-                  className={`flex-1 py-1.5 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all ${
-                    assignedTo === 'Jay'
-                      ? 'bg-indigo-50 text-indigo-900 border-indigo-300 ring-1 ring-indigo-300'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
-                  }`}
-                >
-                  <User className="w-3.5 h-3.5 text-indigo-600" />
-                  <span>Jay (Homeowner)</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAssignedTo('Joe')}
-                  className={`flex-1 py-1.5 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all ${
-                    assignedTo === 'Joe'
+                  onClick={() => setTaskOwner('Joe')}
+                  className={`py-1.5 px-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all ${
+                    taskOwner === 'Joe'
                       ? 'bg-amber-50 text-amber-900 border-amber-300 ring-1 ring-amber-300'
                       : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                   }`}
                 >
                   <HardHat className="w-3.5 h-3.5 text-amber-600" />
                   <span>Joe (GC)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTaskOwner('Jay')}
+                  className={`py-1.5 px-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all ${
+                    taskOwner === 'Jay'
+                      ? 'bg-indigo-50 text-indigo-900 border-indigo-300 ring-1 ring-indigo-300'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <User className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>Jay (Owner)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTaskOwner('Purvi')}
+                  className={`py-1.5 px-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all ${
+                    taskOwner === 'Purvi'
+                      ? 'bg-rose-50 text-rose-900 border-rose-300 ring-1 ring-rose-300'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <User className="w-3.5 h-3.5 text-rose-600" />
+                  <span>Purvi</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTaskOwner('External')}
+                  className={`py-1.5 px-2 rounded-xl text-xs font-semibold border flex items-center justify-center gap-1.5 transition-all ${
+                    taskOwner === 'External'
+                      ? 'bg-slate-100 text-slate-900 border-slate-300 ring-1 ring-slate-300'
+                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <Globe className="w-3.5 h-3.5 text-slate-600" />
+                  <span>External</span>
                 </button>
               </div>
             </div>
@@ -292,10 +316,12 @@ export function NewTaskModal({
                     onChange={(e) => setWaitingOwner(e.target.value as WaitingOnOwner)}
                     className="w-full bg-white border border-purple-200 text-xs rounded-lg px-2.5 py-1.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   >
-                    <option value="Township">Township / Inspector</option>
-                    <option value="Supplier">Supplier / Material Delivery</option>
                     <option value="Jay">Jay (Homeowner Selection)</option>
-                    <option value="Joe">Joe (Subcontractor / Trade)</option>
+                    <option value="Joe">Joe (GC / Field Lead)</option>
+                    <option value="Purvi">Purvi (Owner / Design Lead)</option>
+                    <option value="Supplier">Supplier / Material Delivery</option>
+                    <option value="Township">Township / Inspector</option>
+                    <option value="Trade">Trade / Specialty Subcontractor</option>
                   </select>
                 </div>
                 <div>

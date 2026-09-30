@@ -215,7 +215,8 @@ export function getTopFocusQueues(tasks: TaskWithDependencyState[]) {
   const snoozedTasks = notDone.filter((t) => isActivelySnoozed(t));
 
   const isJayItem = (t: TaskWithDependencyState): boolean => {
-    if (t.waiting_on?.owner === 'Jay') return true;
+    if (t.task_owner === 'Jay' || t.task_owner === 'Purvi') return true;
+    if (t.waiting_on?.owner === 'Jay' || t.waiting_on?.owner === 'Purvi') return true;
     if (t.assigned_to === 'Jay') return true;
     const trade = (t.trade || '').toLowerCase();
     const title = (t.title || '').toLowerCase();
@@ -234,6 +235,7 @@ export function getTopFocusQueues(tasks: TaskWithDependencyState[]) {
   };
 
   const isJoeItem = (t: TaskWithDependencyState): boolean => {
+    if (t.task_owner === 'Joe') return true;
     if (t.waiting_on?.owner === 'Joe') return true;
     if (t.assigned_to === 'Joe') return true;
     // Physical on-site gating blocker: unblocks other tasks or has dependent downstream tasks

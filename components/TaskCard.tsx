@@ -15,6 +15,9 @@ import {
   Check,
   Calendar,
   Clock,
+  Globe,
+  HardHat,
+  User,
 } from 'lucide-react';
 
 interface TaskCardProps {
@@ -261,9 +264,25 @@ export function TaskCard({ task, onOpenDetails, onQuickStatusChange, onSnooze, o
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2">
-          {task.assigned_to && (
-            <span className="text-slate-600 font-medium">
-              Lead: <strong className="text-slate-800 font-semibold">{task.assigned_to}</strong>
+          {task.task_owner && (
+            <span className="inline-flex items-center gap-1 font-bold text-[11px]">
+              {task.task_owner === 'Joe' ? (
+                <span className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 flex items-center gap-1">
+                  <HardHat className="w-3 h-3 text-amber-600" /> Joe
+                </span>
+              ) : task.task_owner === 'Jay' ? (
+                <span className="text-indigo-800 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 flex items-center gap-1">
+                  <User className="w-3 h-3 text-indigo-600" /> Jay
+                </span>
+              ) : task.task_owner === 'Purvi' ? (
+                <span className="text-rose-800 bg-rose-50 px-2 py-0.5 rounded border border-rose-200 flex items-center gap-1">
+                  <User className="w-3 h-3 text-rose-600" /> Purvi
+                </span>
+              ) : (
+                <span className="text-slate-700 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1">
+                  <Globe className="w-3 h-3 text-slate-500" /> External
+                </span>
+              )}
             </span>
           )}
           {task.outcome && (

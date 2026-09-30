@@ -6,6 +6,7 @@ import {
   TaskWithDependencyState,
   WaitingOnOwner,
   Priority,
+  TaskOwner,
 } from '@/types/punchlist';
 import { StatusBadge } from './StatusBadge';
 import {
@@ -28,6 +29,7 @@ import {
   User,
   AlertTriangle,
   RotateCcw,
+  Globe,
 } from 'lucide-react';
 
 interface TaskModalProps {
@@ -68,6 +70,7 @@ export function TaskModal({
   const [trade, setTrade] = useState(task.trade);
   const [outcome, setOutcome] = useState(task.outcome);
   const [priority, setPriority] = useState<Priority>(task.priority || 'medium');
+  const [taskOwner, setTaskOwner] = useState<TaskOwner>(task.task_owner || (task.assigned_to as TaskOwner) || 'Joe');
   const [assignedTo, setAssignedTo] = useState(task.assigned_to || 'Joe');
 
   // Waiting on state
@@ -95,13 +98,15 @@ export function TaskModal({
       trade,
       outcome,
       priority,
-      assigned_to: assignedTo,
+      task_owner: taskOwner,
+      assigned_to: taskOwner,
       waiting_on: isWaiting
         ? {
-            isWaiting: true,
             owner: waitingOwner,
             description: waitingDesc,
+            target_date: waitingDate || undefined,
             targetDate: waitingDate || undefined,
+            isWaiting: true,
             urgency: waitingUrgency,
           }
         : undefined,
@@ -409,11 +414,11 @@ export function TaskModal({
                       className="w-full bg-white border border-purple-200 text-xs rounded-xl px-3 py-2 text-slate-800 shadow-xs"
                     >
                       <option value="Jay">Jay (Owner Decision / Selection)</option>
-                      <option value="Joe">Joe (GC / Subcontractor Lead)</option>
-                      <option value="Township">Township (Permit / Inspector)</option>
+                      <option value="Joe">Joe (GC / Field Lead)</option>
+                      <option value="Purvi">Purvi (Owner / Design Lead)</option>
                       <option value="Supplier">Supplier (Delivery / Lead Time)</option>
+                      <option value="Township">Township (Permit / Inspector)</option>
                       <option value="Trade">Trade (Specialty Subcontractor)</option>
-                      <option value="Other">Other</option>
                     </select>
                   </div>
 
@@ -455,7 +460,9 @@ export function TaskModal({
                     setIsEditingMeta(true);
                   }
                 }}
-                className="text-xs text-amber-700 hover:text-amber-800 font-bold cursor-pointer"
+                className={`text-xs font-bold cursor-pointer ${
+                  activeRole === 'Jay' ? 'text-indigo-700 hover:text-indigo-800' : 'text-amber-700 hover:text-amber-800'
+                }`}
               >
                 {isEditingMeta ? 'Save Changes' : 'Edit Information'}
               </button>
@@ -463,6 +470,61 @@ export function TaskModal({
 
             {isEditingMeta ? (
               <div className="space-y-3">
+                {/* Task Owner selector */}
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Accountability Lead (Task Owner)</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setTaskOwner('Joe')}
+                      className={`py-1.5 px-2 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all ${
+                        taskOwner === 'Joe'
+                          ? 'bg-amber-50 text-amber-900 border-amber-300 ring-1 ring-amber-300'
+                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      <HardHat className="w-3.5 h-3.5 text-amber-600" />
+                      <span>Joe (GC)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTaskOwner('Jay')}
+                      className={`py-1.5 px-2 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all ${
+                        taskOwner === 'Jay'
+                          ? 'bg-indigo-50 text-indigo-900 border-indigo-300 ring-1 ring-indigo-300'
+                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      <User className="w-3.5 h-3.5 text-indigo-600" />
+                      <span>Jay (Owner)</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTaskOwner('Purvi')}
+                      className={`py-1.5 px-2 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all ${
+                        taskOwner === 'Purvi'
+                          ? 'bg-rose-50 text-rose-900 border-rose-300 ring-1 ring-rose-300'
+                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      <User className="w-3.5 h-3.5 text-rose-600" />
+                      <span>Purvi</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setTaskOwner('External')}
+                      className={`py-1.5 px-2 rounded-xl text-xs font-bold border flex items-center justify-center gap-1 transition-all ${
+                        taskOwner === 'External'
+                          ? 'bg-slate-100 text-slate-900 border-slate-300 ring-1 ring-slate-300'
+                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      }`}
+                    >
+                      <Globe className="w-3.5 h-3.5 text-slate-600" />
+                      <span>External</span>
+                    </button>
+                  </div>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold text-slate-600 mb-1">Room / Location</label>
@@ -484,25 +546,14 @@ export function TaskModal({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Outcome Stage</label>
-                    <input
-                      type="text"
-                      value={outcome}
-                      onChange={(e) => setOutcome(e.target.value)}
-                      className="w-full bg-white border border-slate-300 text-xs rounded-xl px-3 py-2 text-slate-900 shadow-xs"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-600 mb-1">Assignee</label>
-                    <input
-                      type="text"
-                      value={assignedTo}
-                      onChange={(e) => setAssignedTo(e.target.value)}
-                      className="w-full bg-white border border-slate-300 text-xs rounded-xl px-3 py-2 text-slate-900 shadow-xs"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-600 mb-1">Outcome Stage</label>
+                  <input
+                    type="text"
+                    value={outcome}
+                    onChange={(e) => setOutcome(e.target.value)}
+                    className="w-full bg-white border border-slate-300 text-xs rounded-xl px-3 py-2 text-slate-900 shadow-xs"
+                  />
                 </div>
 
                 <div>
@@ -523,7 +574,29 @@ export function TaskModal({
                   </p>
                 )}
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs pt-1 border-t border-slate-200/70">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs pt-1 border-t border-slate-200/70">
+                  <div>
+                    <span className="text-slate-500 block text-[11px]">Task Lead</span>
+                    <span className="inline-flex items-center gap-1 font-bold text-xs mt-0.5">
+                      {task.task_owner === 'Joe' ? (
+                        <span className="text-amber-800 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 flex items-center gap-1">
+                          <HardHat className="w-3 h-3 text-amber-600" /> Joe (GC)
+                        </span>
+                      ) : task.task_owner === 'Jay' ? (
+                        <span className="text-indigo-800 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200 flex items-center gap-1">
+                          <User className="w-3 h-3 text-indigo-600" /> Jay (Owner)
+                        </span>
+                      ) : task.task_owner === 'Purvi' ? (
+                        <span className="text-rose-800 bg-rose-50 px-2 py-0.5 rounded border border-rose-200 flex items-center gap-1">
+                          <User className="w-3 h-3 text-rose-600" /> Purvi
+                        </span>
+                      ) : (
+                        <span className="text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-300 flex items-center gap-1">
+                          <Globe className="w-3 h-3 text-slate-600" /> External
+                        </span>
+                      )}
+                    </span>
+                  </div>
                   <div>
                     <span className="text-slate-500 block text-[11px]">Room</span>
                     <span className="font-bold text-slate-900">{task.room}</span>
