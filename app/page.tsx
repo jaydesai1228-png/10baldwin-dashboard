@@ -52,7 +52,7 @@ export default function DashboardPage() {
   ).length;
 
   const waitingOnCount = tasks.filter(
-    (t) => (t.waiting_on?.isWaiting || t.status === 'pending_external') && t.effectiveStatus !== 'done'
+    (t) => ((Boolean(t.waiting_on) && t.waiting_on?.isWaiting !== false) || t.status === 'pending_external') && t.effectiveStatus !== 'done'
   ).length;
 
   // Backup export / import

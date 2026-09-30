@@ -4,20 +4,32 @@ import { PunchTask, TaskStatus, TaskWithDependencyState } from '@/types/punchlis
  * Computes the live dependency graph for all punch list tasks.
  * Hard Blocker / Unlock Engine:
  * - If any task in `blocked_by` is NOT 'done', this task is strictly locked as 'blocked'.
- * - When all prerequisites are 'done', the task unlocks to 'ready' (unless already 'in_progress' or 'pending_external').
- * - Also computes downstream dependents (tasks waiting on this task).
+ * - When all prerequisites are 'done', tasks that were blocked by dependencies unlock to 'ready'.
+ * - Supports both `blocked_by` and explicit `unlocks` mappings.
  */
 export function computeDependencyGraph(tasks: PunchTask[]): TaskWithDependencyState[] {
   const taskMap = new Map<string, PunchTask>();
   tasks.forEach((t) => taskMap.set(t.id, t));
 
-  // Build reverse dependency lookup: blockerId -> list of dependent tasks
-  const downstreamMap = new Map<string, PunchTask[]>();
+  // Build reverse downstream dependency lookup: blockerId -> list of dependent tasks
+  const downstreamMap = new Map<string, Map<string, PunchTask>>();
+
   tasks.forEach((t) => {
+    // 1. From blocked_by: this task `t` is downstream of blockerId
     (t.blocked_by || []).forEach((blockerId) => {
-      const existing = downstreamMap.get(blockerId) || [];
-      existing.push(t);
-      downstreamMap.set(blockerId, existing);
+      const map = downstreamMap.get(blockerId) || new Map<string, PunchTask>();
+      map.set(t.id, t);
+      downstreamMap.set(blockerId, map);
+    });
+
+    // 2. From unlocks: tasks listed in t.unlocks are downstream of `t`
+    (t.unlocks || []).forEach((unlockId) => {
+      const target = taskMap.get(unlockId);
+      if (target) {
+        const map = downstreamMap.get(t.id) || new Map<string, PunchTask>();
+        map.set(target.id, target);
+        downstreamMap.set(t.id, map);
+      }
     });
   });
 
@@ -37,15 +49,16 @@ export function computeDependencyGraph(tasks: PunchTask[]): TaskWithDependencySt
       effectiveStatus = 'blocked';
     } else {
       // All blockers are satisfied (or no blockers)
-      if (task.status === 'blocked') {
-        // Automatically unlock previously blocked tasks to 'ready'
+      if (task.status === 'blocked' && (task.blocked_by || []).length > 0) {
+        // Automatically unlock tasks whose prerequisites have now completed
         effectiveStatus = 'ready';
       } else {
         effectiveStatus = task.status;
       }
     }
 
-    const dependentTasks = downstreamMap.get(task.id) || [];
+    const dependentMap = downstreamMap.get(task.id);
+    const dependentTasks = dependentMap ? Array.from(dependentMap.values()) : [];
 
     return {
       ...task,

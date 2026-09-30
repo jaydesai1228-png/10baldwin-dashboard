@@ -29,7 +29,7 @@ export function WaitingOnView({ tasks, onOpenDetails, onQuickStatusChange }: Wai
     return tasks.filter((t) => {
       const isDone = t.effectiveStatus === 'done';
       if (isDone) return false;
-      return t.waiting_on?.isWaiting || t.status === 'pending_external';
+      return (Boolean(t.waiting_on) && t.waiting_on?.isWaiting !== false) || t.status === 'pending_external';
     });
   }, [tasks]);
 

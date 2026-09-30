@@ -35,7 +35,7 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
       if (searchQuery.trim()) {
         const query = searchQuery.toLowerCase();
         const matchesTitle = task.title.toLowerCase().includes(query);
-        const matchesDesc = task.description.toLowerCase().includes(query);
+        const matchesDesc = (task.description || '').toLowerCase().includes(query);
         const matchesId = task.id.toLowerCase().includes(query);
         const matchesRoom = task.room.toLowerCase().includes(query);
         const matchesTrade = task.trade.toLowerCase().includes(query);

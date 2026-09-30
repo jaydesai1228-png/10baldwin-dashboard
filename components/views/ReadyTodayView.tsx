@@ -34,7 +34,7 @@ export function ReadyTodayView({
   }, [tasks]);
 
   const waitingOnCount = useMemo(() => {
-    return tasks.filter((t) => t.waiting_on?.isWaiting && t.effectiveStatus !== 'done').length;
+    return tasks.filter((t) => (Boolean(t.waiting_on) && t.waiting_on?.isWaiting !== false) && t.effectiveStatus !== 'done').length;
   }, [tasks]);
 
   // Unique Trades and Rooms among ready tasks

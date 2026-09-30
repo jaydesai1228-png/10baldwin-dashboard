@@ -56,16 +56,16 @@ export function TaskModal({
 
   // Editable task state
   const [title, setTitle] = useState(task.title);
-  const [description, setDescription] = useState(task.description);
+  const [description, setDescription] = useState(task.description || '');
   const [room, setRoom] = useState(task.room);
   const [trade, setTrade] = useState(task.trade);
   const [outcome, setOutcome] = useState(task.outcome);
-  const [priority, setPriority] = useState<Priority>(task.priority);
+  const [priority, setPriority] = useState<Priority>(task.priority || 'medium');
   const [assignedTo, setAssignedTo] = useState(task.assigned_to || 'Joe');
 
   // Waiting on state
-  const [isWaiting, setIsWaiting] = useState(task.waiting_on?.isWaiting || false);
-  const [waitingOwner, setWaitingOwner] = useState<WaitingOnOwner>(task.waiting_on?.owner || 'Supplier');
+  const [isWaiting, setIsWaiting] = useState(Boolean(task.waiting_on && task.waiting_on.isWaiting !== false));
+  const [waitingOwner, setWaitingOwner] = useState<WaitingOnOwner>((task.waiting_on?.owner as WaitingOnOwner) || 'Supplier');
   const [waitingDesc, setWaitingDesc] = useState(task.waiting_on?.description || '');
   const [waitingDate, setWaitingDate] = useState(task.waiting_on?.targetDate || '');
   const [waitingUrgency, setWaitingUrgency] = useState<'critical' | 'standard' | 'low'>(
@@ -483,7 +483,7 @@ export function TaskModal({
                 </div>
                 <div>
                   <span className="text-slate-400 block text-[11px]">Created</span>
-                  <span className="font-semibold text-slate-200">{new Date(task.createdAt).toLocaleDateString()}</span>
+                  <span className="font-semibold text-slate-200">{task.createdAt ? new Date(task.createdAt).toLocaleDateString() : 'Active'}</span>
                 </div>
               </div>
             )}
@@ -524,7 +524,7 @@ export function TaskModal({
                         {note.author} {note.author === 'Joe' ? '(GC)' : '(Homeowner)'}
                       </span>
                       <span className="text-slate-500">
-                        {new Date(note.createdAt).toLocaleString([], {
+                        {new Date(note.timestamp || note.createdAt || Date.now()).toLocaleString([], {
                           month: 'short',
                           day: 'numeric',
                           hour: '2-digit',

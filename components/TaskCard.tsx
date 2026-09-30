@@ -53,10 +53,10 @@ export function TaskCard({ task, onOpenDetails, onQuickStatusChange }: TaskCardP
             </span>
             <span
               className={`text-[11px] font-medium px-2 py-0.5 rounded-md border ${
-                priorityColors[task.priority] || priorityColors.medium
+                priorityColors[task.priority || 'medium'] || priorityColors.medium
               }`}
             >
-              {task.priority.toUpperCase()}
+              {(task.priority || 'medium').toUpperCase()}
             </span>
           </div>
 
@@ -131,7 +131,7 @@ export function TaskCard({ task, onOpenDetails, onQuickStatusChange }: TaskCardP
         )}
 
         {/* Waiting On Pill */}
-        {task.waiting_on?.isWaiting && (
+        {task.waiting_on && task.waiting_on.isWaiting !== false && (
           <div className="mb-3 px-2.5 py-1.5 rounded-xl bg-orange-950/40 border border-orange-700/40 text-orange-300 text-xs flex items-start gap-2">
             <AlertTriangle className="w-3.5 h-3.5 mt-0.5 text-orange-400 shrink-0" />
             <div className="text-[11px]">
@@ -160,7 +160,11 @@ export function TaskCard({ task, onOpenDetails, onQuickStatusChange }: TaskCardP
                   {latestNote.author}
                 </span>
                 <span>•</span>
-                <span>{new Date(latestNote.createdAt).toLocaleDateString()}</span>
+                <span>
+                  {new Date(
+                    latestNote.timestamp || latestNote.createdAt || Date.now()
+                  ).toLocaleDateString()}
+                </span>
               </div>
               <p className="text-[11px] text-slate-300 truncate">{latestNote.text}</p>
             </div>

@@ -17,13 +17,14 @@ export interface FieldNote {
   id: string;
   author: UserRole;
   text: string;
-  createdAt: string;
+  createdAt?: string;
+  timestamp?: string;
 }
 
 export interface WaitingOnMetadata {
-  isWaiting: boolean;
-  owner: WaitingOnOwner;
+  owner: WaitingOnOwner | string;
   description: string;
+  isWaiting?: boolean;
   targetDate?: string;
   urgency?: 'critical' | 'standard' | 'low';
 }
@@ -31,19 +32,22 @@ export interface WaitingOnMetadata {
 export interface PunchTask {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   room: string;
   trade: string;
   outcome: string;
   status: TaskStatus;
-  priority: Priority;
+  priority?: Priority;
   blocked_by: string[]; // List of task IDs that must be completed ('done') before this task can be worked on
+  unlocks?: string[]; // Downstream tasks this task will unlock
   waiting_on?: WaitingOnMetadata;
   notes: FieldNote[];
   assigned_to?: 'Jay' | 'Joe' | string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+export type Task = PunchTask;
 
 export interface TaskWithDependencyState extends PunchTask {
   effectiveStatus: TaskStatus; // If any blocker is incomplete, effectiveStatus is 'blocked' (unless already 'done')
