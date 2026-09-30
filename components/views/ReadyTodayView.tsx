@@ -1,7 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { TaskWithDependencyState, TaskStatus } from '@/types/punchlist';
 import { TaskCard } from '../TaskCard';
-import { Sparkles, Lock, Filter, CheckCircle2, AlertCircle } from 'lucide-react';
+import {
+  Sparkles,
+  Lock,
+  Hourglass,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  MapPin,
+  Wrench,
+  LayoutGrid,
+} from 'lucide-react';
 
 interface ReadyTodayViewProps {
   tasks: TaskWithDependencyState[];
@@ -10,14 +20,16 @@ interface ReadyTodayViewProps {
   onSwitchToWaitingTab: () => void;
 }
 
+type GroupByMode = 'room' | 'trade' | 'none';
+
 export function ReadyTodayView({
   tasks,
   onOpenDetails,
   onQuickStatusChange,
   onSwitchToWaitingTab,
 }: ReadyTodayViewProps) {
-  const [selectedTrade, setSelectedTrade] = useState<string>('All');
-  const [selectedRoom, setSelectedRoom] = useState<string>('All');
+  const [groupBy, setGroupBy] = useState<GroupByMode>('room');
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
 
   // Filter tasks that are ready to work today:
   // Must NOT have unsatisfied blockers, and must NOT be 'done'
@@ -34,136 +46,201 @@ export function ReadyTodayView({
   }, [tasks]);
 
   const waitingOnCount = useMemo(() => {
-    return tasks.filter((t) => (Boolean(t.waiting_on) && t.waiting_on?.isWaiting !== false) && t.effectiveStatus !== 'done').length;
+    return tasks.filter(
+      (t) => (Boolean(t.waiting_on) && t.waiting_on?.isWaiting !== false) && t.effectiveStatus !== 'done'
+    ).length;
   }, [tasks]);
 
-  // Unique Trades and Rooms among ready tasks
-  const trades = useMemo(() => {
-    const set = new Set<string>();
-    readyTasks.forEach((t) => set.add(t.trade));
-    return ['All', ...Array.from(set)];
-  }, [readyTasks]);
+  // Grouped tasks
+  const groupedTasks = useMemo(() => {
+    if (groupBy === 'none') {
+      return [{ groupName: 'All Ready Tasks', items: readyTasks }];
+    }
 
-  const rooms = useMemo(() => {
-    const set = new Set<string>();
-    readyTasks.forEach((t) => set.add(t.room));
-    return ['All', ...Array.from(set)];
-  }, [readyTasks]);
-
-  const filteredTasks = useMemo(() => {
-    return readyTasks.filter((t) => {
-      if (selectedTrade !== 'All' && t.trade !== selectedTrade) return false;
-      if (selectedRoom !== 'All' && t.room !== selectedRoom) return false;
-      return true;
+    const groups: Record<string, TaskWithDependencyState[]> = {};
+    readyTasks.forEach((task) => {
+      const key = groupBy === 'room' ? task.room || 'General' : task.trade || 'General';
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(task);
     });
-  }, [readyTasks, selectedTrade, selectedRoom]);
+
+    return Object.entries(groups)
+      .sort((a, b) => b[1].length - a[1].length)
+      .map(([groupName, items]) => ({ groupName, items }));
+  }, [readyTasks, groupBy]);
+
+  const toggleGroup = (groupName: string) => {
+    setCollapsedGroups((prev) => ({
+      ...prev,
+      [groupName]: !prev[groupName],
+    }));
+  };
 
   return (
     <div className="space-y-6">
-      {/* Banner / Overview Card */}
-      <div className="p-4 sm:p-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-800 border border-slate-800 shadow-xl">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="p-1.5 rounded-lg bg-teal-500/10 text-teal-400 border border-teal-500/20">
-                <Sparkles className="w-4 h-4" />
-              </span>
-              <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                Ready to Work Today
-              </h2>
+      {/* Hero Banner with Clear Metrics */}
+      <div className="p-6 md:p-8 rounded-3xl bg-white border border-slate-200/90 shadow-sm">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Zero Prerequisite Blockers</span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-400 max-w-xl">
-              Zero blockers. All prerequisite dependencies are satisfied. Trades can mobilize and execute these tasks on-site right now.
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight font-sans">
+              Ready to Work Today
+            </h2>
+            <p className="text-sm text-slate-600 max-w-2xl leading-relaxed">
+              Every prerequisite dependency for these tasks is satisfied. Trades and subs can mobilize and execute these items immediately on-site at 10 Baldwin.
             </p>
           </div>
 
-          {/* Quick Metrics */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            <div className="px-3.5 py-2 rounded-2xl bg-teal-950/40 border border-teal-800/40 text-center">
-              <div className="text-lg sm:text-xl font-extrabold text-teal-300">{readyTasks.length}</div>
-              <div className="text-[10px] font-semibold text-teal-400 uppercase tracking-wider">Unblocked & Ready</div>
+          {/* Quick Metrics Bar */}
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            {/* Ready to Work Today */}
+            <div className="px-5 py-3 rounded-2xl bg-emerald-50 border border-emerald-200 text-center min-w-[130px] shadow-xs">
+              <div className="text-2xl md:text-3xl font-black text-emerald-700">{readyTasks.length}</div>
+              <div className="text-xs font-bold text-emerald-800 uppercase tracking-wide mt-0.5">Ready Now</div>
             </div>
 
-            <div className="px-3.5 py-2 rounded-2xl bg-rose-950/30 border border-rose-900/30 text-center">
-              <div className="text-lg sm:text-xl font-extrabold text-rose-300">{lockedTasksCount}</div>
-              <div className="text-[10px] font-semibold text-rose-400 uppercase tracking-wider">Hard Locked</div>
+            {/* Hard Locked */}
+            <div className="px-5 py-3 rounded-2xl bg-rose-50 border border-rose-200 text-center min-w-[120px] shadow-xs">
+              <div className="text-2xl md:text-3xl font-black text-rose-700">{lockedTasksCount}</div>
+              <div className="text-xs font-bold text-rose-800 uppercase tracking-wide mt-0.5">Locked</div>
             </div>
 
+            {/* Waiting On External */}
             {waitingOnCount > 0 && (
               <button
                 type="button"
                 onClick={onSwitchToWaitingTab}
-                className="px-3.5 py-2 rounded-2xl bg-amber-950/30 hover:bg-amber-900/40 border border-amber-900/40 text-center transition-colors cursor-pointer"
+                className="px-5 py-3 rounded-2xl bg-purple-50 hover:bg-purple-100/80 border border-purple-200 text-center min-w-[130px] shadow-xs transition-colors cursor-pointer text-left"
               >
-                <div className="text-lg sm:text-xl font-extrabold text-amber-300">{waitingOnCount}</div>
-                <div className="text-[10px] font-semibold text-amber-400 uppercase tracking-wider">Waiting On</div>
+                <div className="text-2xl md:text-3xl font-black text-purple-700 flex items-center justify-between">
+                  <span>{waitingOnCount}</span>
+                  <Hourglass className="w-5 h-5 text-purple-500" />
+                </div>
+                <div className="text-xs font-bold text-purple-800 uppercase tracking-wide mt-0.5">Chasing</div>
               </button>
             )}
           </div>
         </div>
 
-        {/* Filter Pills */}
-        <div className="mt-5 pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
-            <span className="text-xs font-semibold text-slate-400 flex items-center gap-1 shrink-0">
-              <Filter className="w-3 h-3" /> Trade:
-            </span>
-            {trades.map((trade) => (
+        {/* View Controls & Grouping Bar */}
+        <div className="mt-6 pt-5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Group by:</span>
+            <div className="inline-flex p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs">
               <button
-                key={trade}
                 type="button"
-                onClick={() => setSelectedTrade(trade)}
-                className={`px-2.5 py-1 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${
-                  selectedTrade === trade
-                    ? 'bg-amber-500 text-slate-950 font-bold'
-                    : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                onClick={() => setGroupBy('room')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
+                  groupBy === 'room'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
-                {trade}
+                <MapPin className="w-3.5 h-3.5 text-amber-600" />
+                <span>Room</span>
               </button>
-            ))}
+              <button
+                type="button"
+                onClick={() => setGroupBy('trade')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
+                  groupBy === 'trade'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Wrench className="w-3.5 h-3.5 text-sky-600" />
+                <span>Trade</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setGroupBy('none')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all cursor-pointer ${
+                  groupBy === 'none'
+                    ? 'bg-white text-slate-900 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <LayoutGrid className="w-3.5 h-3.5 text-slate-500" />
+                <span>Flat List</span>
+              </button>
+            </div>
           </div>
 
-          {rooms.length > 2 && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-slate-400 shrink-0">Room:</span>
-              <select
-                value={selectedRoom}
-                onChange={(e) => setSelectedRoom(e.target.value)}
-                className="bg-slate-800 text-slate-200 border border-slate-700 text-xs rounded-xl px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-amber-500"
-              >
-                {rooms.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div className="text-xs text-slate-500 font-medium">
+            <span>Tip: </span>
+            <strong className="text-slate-700">Double-click any card</strong> to view field notes & dependencies
+          </div>
         </div>
       </div>
 
-      {/* Tasks Grid */}
-      {filteredTasks.length === 0 ? (
-        <div className="text-center py-16 bg-slate-900/40 border border-dashed border-slate-800 rounded-3xl p-8 space-y-3">
-          <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
-          <h3 className="text-base font-semibold text-slate-200">No tasks currently ready in this filter</h3>
-          <p className="text-xs text-slate-400 max-w-md mx-auto">
-            {readyTasks.length === 0
-              ? 'All uncompleted tasks are either locked by prerequisites or awaiting external materials. Check the Burndown or Waiting On tab.'
-              : 'Try clearing the trade or room filter above.'}
+      {/* Grouped Tasks Lists with Collapsible Headers */}
+      {readyTasks.length === 0 ? (
+        <div className="text-center py-16 bg-white border border-dashed border-slate-200 rounded-3xl p-8 space-y-3 shadow-xs">
+          <CheckCircle2 className="w-12 h-12 text-emerald-600 mx-auto" />
+          <h3 className="text-lg font-bold text-slate-900">All uncompleted tasks are currently locked</h3>
+          <p className="text-sm text-slate-500 max-w-md mx-auto">
+            The active items are either awaiting trade prerequisites or external material deliveries. Check the &ldquo;Waiting On / Chasing&rdquo; tab to unblock downstream work.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onOpenDetails={onOpenDetails}
-              onQuickStatusChange={onQuickStatusChange}
-            />
-          ))}
+        <div className="space-y-6">
+          {groupedTasks.map(({ groupName, items }) => {
+            const isCollapsed = collapsedGroups[groupName];
+
+            return (
+              <div key={groupName} className="space-y-3">
+                {/* Group Header (Clickable to Collapse/Expand) */}
+                {groupBy !== 'none' && (
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(groupName)}
+                    className="w-full flex items-center justify-between p-3.5 px-5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs transition-colors text-left cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-3">
+                      {groupBy === 'room' ? (
+                        <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-700 flex items-center justify-center font-bold text-xs border border-amber-200">
+                          <MapPin className="w-4 h-4" />
+                        </div>
+                      ) : (
+                        <div className="w-7 h-7 rounded-lg bg-sky-50 text-sky-700 flex items-center justify-center font-bold text-xs border border-sky-200">
+                          <Wrench className="w-4 h-4" />
+                        </div>
+                      )}
+                      <div>
+                        <h3 className="text-base font-bold text-slate-900 group-hover:text-amber-800 transition-colors">
+                          {groupName}
+                        </h3>
+                      </div>
+                      <span className="ml-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        {items.length} ready
+                      </span>
+                    </div>
+
+                    <div className="p-1 rounded-lg text-slate-400 group-hover:text-slate-700">
+                      {isCollapsed ? <ChevronDown className="w-5 h-5" /> : <ChevronUp className="w-5 h-5" />}
+                    </div>
+                  </button>
+                )}
+
+                {/* Group Cards Grid */}
+                {!isCollapsed && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {items.map((task) => (
+                      <TaskCard
+                        key={task.id}
+                        task={task}
+                        onOpenDetails={onOpenDetails}
+                        onQuickStatusChange={onQuickStatusChange}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>

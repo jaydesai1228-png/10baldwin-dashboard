@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { TaskWithDependencyState, TaskStatus } from '@/types/punchlist';
 import { TaskCard } from '../TaskCard';
-import { Search, Filter, Lock, Unlock, CheckCircle2, RotateCcw } from 'lucide-react';
+import { Search, Filter, RotateCcw, CheckCircle2 } from 'lucide-react';
 
 interface AllTasksViewProps {
   tasks: TaskWithDependencyState[];
@@ -79,8 +79,8 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
   return (
     <div className="space-y-6">
       {/* Search & Filter Header Panel */}
-      <div className="p-4 sm:p-6 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl space-y-4">
-        {/* Search input */}
+      <div className="p-6 rounded-3xl bg-white border border-slate-200/90 shadow-sm space-y-4">
+        {/* Search Input */}
         <div className="relative">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
@@ -88,19 +88,19 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
             placeholder="Search punch list items by title, trade, room, notes, ID..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 bg-slate-950 border border-slate-800 rounded-2xl text-xs sm:text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
           />
         </div>
 
         {/* Dropdown Filters Row */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
           {/* Room */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 mb-1">Room</label>
+            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Room</label>
             <select
               value={selectedRoom}
               onChange={(e) => setSelectedRoom(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl px-2.5 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              className="w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
               {rooms.map((r) => (
                 <option key={r} value={r}>
@@ -112,11 +112,11 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
 
           {/* Trade */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 mb-1">Trade</label>
+            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Trade</label>
             <select
               value={selectedTrade}
               onChange={(e) => setSelectedTrade(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl px-2.5 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              className="w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
               {trades.map((t) => (
                 <option key={t} value={t}>
@@ -128,16 +128,16 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
 
           {/* Status */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 mb-1">Status</label>
+            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Status</label>
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl px-2.5 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              className="w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
               <option value="All">All Statuses</option>
               <option value="ready">Ready to Work</option>
               <option value="in_progress">In Progress</option>
-              <option value="pending_external">Waiting On</option>
+              <option value="pending_external">Waiting On / Chasing</option>
               <option value="blocked">Locked / Blocked</option>
               <option value="done">Done</option>
             </select>
@@ -145,30 +145,30 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
 
           {/* Hard Blocker State */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 mb-1">Blocker State</label>
+            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider mb-1">Dependencies</label>
             <select
               value={blockerFilter}
               onChange={(e) => setBlockerFilter(e.target.value as any)}
-              className="w-full bg-slate-950 border border-slate-800 text-xs rounded-xl px-2.5 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-amber-500"
+              className="w-full bg-white border border-slate-200 text-xs rounded-xl px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
             >
-              <option value="All">All Tasks</option>
-              <option value="locked">🔒 Hard Locked Only</option>
+              <option value="All">All Items</option>
+              <option value="locked">🔒 Blocked Only</option>
               <option value="unlocked">🔓 Unblocked Only</option>
             </select>
           </div>
         </div>
 
         {/* Filter Summary & Clear Button */}
-        <div className="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-slate-800/80">
+        <div className="flex items-center justify-between text-xs text-slate-500 pt-2 border-t border-slate-100 font-medium">
           <span>
-            Showing <strong className="text-white">{filteredTasks.length}</strong> of {tasks.length} items
+            Showing <strong className="text-slate-900">{filteredTasks.length}</strong> of {tasks.length} items
           </span>
 
           {hasActiveFilters && (
             <button
               type="button"
               onClick={handleResetFilters}
-              className="flex items-center gap-1 text-amber-400 hover:text-amber-300 transition-colors"
+              className="flex items-center gap-1.5 text-amber-700 hover:text-amber-800 font-bold transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Reset Filters</span>
@@ -179,15 +179,15 @@ export function AllTasksView({ tasks, onOpenDetails, onQuickStatusChange }: AllT
 
       {/* Tasks Grid */}
       {filteredTasks.length === 0 ? (
-        <div className="text-center py-16 bg-slate-900/40 border border-dashed border-slate-800 rounded-3xl p-8 space-y-3">
-          <CheckCircle2 className="w-10 h-10 text-slate-500 mx-auto" />
-          <h3 className="text-base font-semibold text-slate-200">No punch list items match this filter</h3>
-          <p className="text-xs text-slate-400 max-w-md mx-auto">
+        <div className="text-center py-16 bg-white border border-dashed border-slate-200 rounded-3xl p-8 space-y-3 shadow-xs">
+          <CheckCircle2 className="w-12 h-12 text-slate-300 mx-auto" />
+          <h3 className="text-lg font-bold text-slate-900">No punch list items match this filter</h3>
+          <p className="text-sm text-slate-500 max-w-md mx-auto">
             Try adjusting your search query or reset your filters above.
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredTasks.map((task) => (
             <TaskCard
               key={task.id}

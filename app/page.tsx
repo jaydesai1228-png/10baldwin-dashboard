@@ -93,15 +93,15 @@ export default function DashboardPage() {
 
   if (!isLoaded) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-400 gap-3">
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center text-slate-500 gap-3">
         <div className="w-10 h-10 border-4 border-amber-500/20 border-t-amber-500 rounded-full animate-spin" />
-        <p className="text-sm font-semibold tracking-wide">Loading 10 Baldwin Dashboard...</p>
+        <p className="text-sm font-semibold tracking-wide text-slate-700">Loading 10 Baldwin Dashboard...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-amber-500 selection:text-slate-950">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-amber-500 selection:text-slate-950 font-sans">
       {/* Sticky Header with Fast Role Switcher */}
       <Navbar
         activeRole={activeRole}
@@ -114,22 +114,22 @@ export default function DashboardPage() {
       {/* Primary Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 py-4 sm:px-6 sm:py-6 space-y-6">
         {/* Navigation Tabs Bar */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-800">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-200">
           {/* Tab 1: Ready to Work Today */}
           <button
             type="button"
             onClick={() => setActiveTab('ready_today')}
-            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'ready_today'
-                ? 'bg-teal-500/15 text-teal-300 border border-teal-500/30 shadow-md shadow-teal-950/40'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent'
             }`}
           >
-            <Sparkles className="w-4 h-4 text-teal-400" />
+            <Sparkles className="w-4 h-4 text-emerald-600" />
             <span>Ready to Work Today</span>
             <span
-              className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
-                activeTab === 'ready_today' ? 'bg-teal-500 text-slate-950' : 'bg-slate-800 text-slate-400'
+              className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                activeTab === 'ready_today' ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-700'
               }`}
             >
               {readyTodayCount}
@@ -140,13 +140,13 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setActiveTab('burndown')}
-            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'burndown'
-                ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30 shadow-md shadow-amber-950/40'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                ? 'bg-amber-50 text-amber-900 border border-amber-200 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent'
             }`}
           >
-            <TrendingUp className="w-4 h-4 text-amber-400" />
+            <TrendingUp className="w-4 h-4 text-amber-600" />
             <span>Burn Down & Progress</span>
           </button>
 
@@ -154,18 +154,18 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setActiveTab('waiting_on')}
-            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'waiting_on'
-                ? 'bg-orange-500/15 text-orange-300 border border-orange-500/30 shadow-md shadow-orange-950/40'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                ? 'bg-purple-50 text-purple-900 border border-purple-200 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent'
             }`}
           >
-            <AlertTriangle className="w-4 h-4 text-orange-400" />
+            <AlertTriangle className="w-4 h-4 text-purple-600" />
             <span>Waiting On / Chasing</span>
             {waitingOnCount > 0 && (
               <span
-                className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
-                  activeTab === 'waiting_on' ? 'bg-orange-500 text-slate-950' : 'bg-orange-950/80 text-orange-300'
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                  activeTab === 'waiting_on' ? 'bg-purple-600 text-white' : 'bg-purple-100 text-purple-700'
                 }`}
               >
                 {waitingOnCount}
@@ -177,17 +177,17 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setActiveTab('all_tasks')}
-            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all cursor-pointer ${
               activeTab === 'all_tasks'
-                ? 'bg-sky-500/15 text-sky-300 border border-sky-500/30 shadow-md shadow-sky-950/40'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                ? 'bg-blue-50 text-blue-900 border border-blue-200 shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-white border border-transparent'
             }`}
           >
-            <ListTodo className="w-4 h-4 text-sky-400" />
+            <ListTodo className="w-4 h-4 text-blue-600" />
             <span>All Punch Items</span>
             <span
-              className={`px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
-                activeTab === 'all_tasks' ? 'bg-sky-500 text-slate-950' : 'bg-slate-800 text-slate-400'
+              className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                activeTab === 'all_tasks' ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-700'
               }`}
             >
               {tasks.length}
@@ -225,10 +225,10 @@ export default function DashboardPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-900 bg-slate-950 py-6 px-4 sm:px-6 text-xs text-slate-500">
+      <footer className="border-t border-slate-200 bg-white py-6 px-4 sm:px-6 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
             <span>10 Baldwin Construction Punch List • Shared Access for Jay & Joe</span>
           </div>
 
@@ -236,14 +236,14 @@ export default function DashboardPage() {
             <button
               type="button"
               onClick={handleExportJson}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-colors cursor-pointer"
             >
-              <Download className="w-3.5 h-3.5" />
+              <Download className="w-3.5 h-3.5 text-slate-500" />
               <span>Export Backup JSON</span>
             </button>
 
-            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 transition-colors cursor-pointer">
-              <Upload className="w-3.5 h-3.5" />
+            <label className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 transition-colors cursor-pointer">
+              <Upload className="w-3.5 h-3.5 text-slate-500" />
               <span>Import JSON</span>
               <input type="file" accept=".json" onChange={handleImportJson} className="hidden" />
             </label>
