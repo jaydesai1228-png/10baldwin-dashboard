@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 10 Baldwin Dashboard 🏗️
 
-## Getting Started
+Mobile-first residential construction punch list, burndown, and dependency-tracking dashboard for 10 Baldwin. Built for **Jay (Homeowner)** and **Joe (General Contractor)**.
 
-First, run the development server:
+## Live Deployment
+- **Deployment**: Hosted on Vercel
+- **Access**: Open / Public direct link for field use on mobile devices and desktop (no login walls or PINs needed).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Key Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 1. Hard Blocker / Unlock Engine
+- **Prerequisite Dependencies (`blocked_by`)**: Tasks store an array of blocker task IDs.
+- **Visual Locking**: If any blocker is incomplete, the dependent task is strictly locked with a visual padlock badge showing exactly what items are holding it up.
+- **Automatic Cascading Unlocks**: Marking blocker tasks "Done" immediately evaluates downstream dependencies and unlocks them to "Ready to Work".
+- **Reverse Downstream Insight**: Every task card and drawer shows which future tasks will be unlocked once it is finished.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. Sticky Header Role Switcher
+- Fast 1-tap toggle between **Jay** (Homeowner) and **Joe** (GC).
+- Auto-tags all on-site field notes, decisions, and comments with the active persona and timestamp.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Primary Views
+- **Ready to Work Today (Default View)**: Automatically filters out any task with unsatisfied blockers. Shows only actionable tasks ready for trades on-site today.
+- **Burn Down & Progress**: Real-time progress bars and donut meters tracking overall completion %, progress by Construction Stage / Outcome, by Room, and by Trade.
+- **Waiting On / Chasing**: Dedicated bottleneck board categorizing items waiting on Homeowner decisions (Jay), GC mobilization (Joe), Township permit / inspections, or Supplier material deliveries.
+- **All Punch Items**: Searchable master list with multi-dimensional filtering by Room, Trade, Outcome, Status, and Blocker state.
 
-## Learn More
+### 4. Task Details Drawer & Field Notes
+- Status switcher: `ready`, `in_progress`, `pending_external`, `blocked`, `done`.
+- Dependency manager: search and link/unlink prerequisite blocker tasks.
+- External bottleneck tracker: owner, urgency, description, target resolution date.
+- Timestamped field notes thread with author attribution.
 
-To learn more about Next.js, take a look at the following resources:
+### 5. Data Persistence & Portability
+- Lightweight API route (`/api/tasks`) with in-memory persistence and client `localStorage` sync for instant zero-database deployments on Vercel.
+- JSON Export & Import utility for offline backup snapshots.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Stack
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Icons**: Lucide React
